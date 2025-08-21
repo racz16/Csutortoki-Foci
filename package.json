@@ -17,7 +17,7 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "eslint",
+        "eslint": "eslint",
         "prettier-lint": "prettier --check .",
         "prettier-format": "prettier --write .",
         "prepare": "husky install"
