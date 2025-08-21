@@ -1,5 +1,17 @@
 {
     "name": "csutortoki-foci",
+    "displayName": "Csütörtöki Foci",
+    "author": "Rácz Zalán",
+    "publisher": "raczzalan",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/racz16/Csutortoki-Foci"
+    },
+    "bugs": {
+        "email": "zalan.racz.dev@gmail.com",
+        "url": "https://github.com/racz16/Csutortoki-Foci/issues"
+    },
+    "license": "MIT",
     "version": "0.1.0",
     "private": true,
     "scripts": {
