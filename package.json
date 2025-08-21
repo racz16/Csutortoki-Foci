@@ -1,15 +1,14 @@
 {
     "name": "csutortoki-foci",
     "displayName": "Csütörtöki Foci",
-    "author": "Rácz Zalán",
-    "publisher": "raczzalan",
+    "author": {
+        "name": "Zalán Rácz",
+        "email": "zalan.racz.dev@gmail.com",
+        "url": "https://github.com/racz16"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/racz16/Csutortoki-Foci"
-    },
-    "bugs": {
-        "email": "zalan.racz.dev@gmail.com",
-        "url": "https://github.com/racz16/Csutortoki-Foci/issues"
     },
     "license": "MIT",
     "version": "0.1.0",
