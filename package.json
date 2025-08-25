@@ -20,9 +20,16 @@
         "eslint": "eslint",
         "prettier-lint": "prettier --check .",
         "prettier-format": "prettier --write .",
+        "prisma-dev": "prisma dev",
+        "prisma-generate": "prisma generate",
+        "prisma-migrate": "prisma migrate dev",
+        "prisma-studio": "prisma studio",
+        "prisma-format-lint": "prisma format --check",
+        "prisma-format": "prisma format",
         "prepare": "husky install"
     },
     "dependencies": {
+        "@prisma/client": "^6.14.0",
         "next": "15.5.0",
         "react": "19.1.0",
         "react-dom": "19.1.0"
@@ -39,10 +46,13 @@
         "lint-staged": "^16.1.5",
         "prettier": "^3.6.2",
         "prettier-plugin-organize-imports": "^4.2.0",
+        "prisma": "^6.14.0",
         "tailwindcss": "^4",
+        "tsx": "^4.20.4",
         "typescript": "^5"
     },
     "lint-staged": {
-        "*": "prettier --write --ignore-unknown"
+        "*": "prettier --write --ignore-unknown",
+        "*.prisma": "prisma format"
     }
 }
