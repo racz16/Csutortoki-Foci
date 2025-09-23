@@ -1,4 +1,6 @@
 import { MatchDto } from '@/dtos/match-dto';
+import { MatchesDto } from '@/dtos/matches-dto';
+import { Prisma } from '@/generated/prisma';
 import { ordinal, predictWin, rating, Team } from 'openskill';
 import { prismaClient } from './prisma';
 
@@ -24,6 +26,33 @@ interface TeamPlayerQueryResult {
 interface PlayerQueryResult {
     id: number;
     name: string;
+}
+
+export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
+    const pageSize = 10;
+    const where: Prisma.MatchWhereInput | undefined = nextDate ? { date: { lte: nextDate } } : undefined;
+
+    const matches = await prismaClient.match.findMany({
+        where,
+        orderBy: { date: 'desc' },
+        take: pageSize + 1,
+        include: {
+            teams: {
+                orderBy: { id: 'asc' },
+                include: {
+                    teamPlayer: {
+                        orderBy: { player: { name: 'asc' } },
+                        include: { player: { omit: { mu: true, sigma: true } } },
+                        omit: { id: true, playerId: true, teamId: true },
+                    },
+                },
+                omit: { id: true, matchId: true },
+            },
+        },
+    });
+
+    const newNextDate = matches.length === pageSize + 1 ? (matches.pop()?.date?.toString() ?? null) : null;
+    return { matches: matches.map((m) => mapMatchToDto(m)), nextDate: newNextDate };
 }
 
 export async function getLastMatch(): Promise<MatchDto> {
