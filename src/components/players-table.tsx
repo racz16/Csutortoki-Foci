@@ -101,6 +101,13 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     </tr>
                 </thead>
                 <tbody>
+                    {!players.length && (
+                        <tr>
+                            <td colSpan={4}>
+                                <h3 className="p-2 text-center text-lg sm:p-4">Még nincsenek játékosok</h3>
+                            </td>
+                        </tr>
+                    )}
                     {players.map((p, i) => (
                         <tr key={p.id}>
                             <td className={`${i === 0 && 'pt-2'}`}>

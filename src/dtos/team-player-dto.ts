@@ -3,4 +3,6 @@ export interface TeamPlayerDto {
     name: string;
     beforeRating: number;
     ratingChange: number;
+    regular: boolean;
+    weight: number;
 }

@@ -29,15 +29,13 @@ export default async function MainPage({ randomPlayer }: { randomPlayer: ReactNo
                         A statisztikák 2025. júliusa óta értendők
                     </legend>
                 </div>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4">
-                    <Suspense fallback={<GlobalStatisticsSkeleton />}>
-                        <GlobalStatisticsLazy />
-                    </Suspense>
-                    {/* <div className="flex flex-col items-center justify-around">
-                        <UpdateAllMatchesButton />
-                        <UpdateLastMatchButton />
-                    </div> */}
-                </div>
+                <Suspense fallback={<GlobalStatisticsSkeleton />}>
+                    <GlobalStatisticsLazy />
+                </Suspense>
+                {/* <div className="flex flex-col items-center justify-around">
+                    <UpdateAllMatchesButton />
+                    <UpdateLastMatchButton />
+                </div> */}
             </section>
         </div>
     );
@@ -45,12 +43,18 @@ export default async function MainPage({ randomPlayer }: { randomPlayer: ReactNo
 
 async function LastMatchLazy(): Promise<JSX.Element> {
     const match = await getLastMatch();
-    return <MatchCard match={match} />;
+    return match ? <MatchCard match={match} /> : <h3 className="text-center text-lg">Még nincsenek meccsek</h3>;
 }
 
-async function GlobalStatisticsLazy(): Promise<JSX.Element[]> {
+async function GlobalStatisticsLazy(): Promise<JSX.Element | JSX.Element[]> {
     const statistics = await getGeneralStatistics();
-    return statistics.map((s) => (
-        <StatisticCard statistic={s} className="row-span-3 grid grid-rows-subgrid gap-1 sm:gap-2" key={s.id} />
-    ));
+    return statistics.length ? (
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4">
+            {statistics.map((s) => (
+                <StatisticCard statistic={s} className="row-span-3 grid grid-rows-subgrid gap-1 sm:gap-2" key={s.id} />
+            ))}
+        </div>
+    ) : (
+        <h3 className="text-center text-lg">Még nincsenek statisztikák</h3>
+    );
 }

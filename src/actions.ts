@@ -11,6 +11,7 @@ interface TeamQueryResult {
 interface TeamPlayerQueryResult {
     id: number;
     player: PlayerQueryResult;
+    weight: number | null;
 }
 
 interface PlayerQueryResult {
@@ -21,7 +22,10 @@ interface PlayerQueryResult {
 
 export async function updateAll(): Promise<void> {
     await init();
-    const matches = await prismaClient.match.findMany({ orderBy: { date: 'asc' }, omit: { date: true } });
+    const matches = await prismaClient.match.findMany({
+        orderBy: { date: 'asc' },
+        omit: { date: true, locationId: true },
+    });
     for (const match of matches) {
         await update(match.id);
     }
@@ -45,11 +49,13 @@ async function init(): Promise<void> {
 }
 
 export async function updateLast(): Promise<void> {
-    const match = await prismaClient.match.findFirstOrThrow({
+    const match = await prismaClient.match.findFirst({
         orderBy: { date: 'desc' },
-        omit: { date: true },
+        omit: { date: true, locationId: true },
     });
-    await update(match.id);
+    if (match) {
+        await update(match.id);
+    }
 }
 
 async function update(matchId: number): Promise<void> {
@@ -102,14 +108,18 @@ async function updateRatings(teams: TeamQueryResult[]): Promise<void> {
 function computeResults(teams: TeamQueryResult[]): Team[] {
     const osTeams: Team[] = [];
     const osScore: number[] = [];
+    const osWeights: number[][] = [];
     for (const team of teams) {
         osScore.push(team.score);
         const osTeam: Team = [];
+        const osWeight: number[] = [];
         for (const teamPlayer of team.teamPlayer) {
             const osRating = rating({ mu: teamPlayer.player.mu, sigma: teamPlayer.player.sigma });
             osTeam.push(osRating);
+            osWeight.push(teamPlayer.weight ?? 1);
         }
         osTeams.push(osTeam);
+        osWeights.push(osWeight);
     }
     return rate(osTeams, { score: osScore });
 }

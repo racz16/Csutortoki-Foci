@@ -4,4 +4,5 @@ export interface PlayerListDto {
     matchCount: number;
     matchRatio: number;
     rating: number;
+    regular: boolean;
 }

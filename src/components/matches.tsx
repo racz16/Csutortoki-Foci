@@ -40,19 +40,24 @@ export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX
 
     return (
         <>
-            <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
-                {matches.matches.map((m) => (
-                    <MatchCard match={m} key={m.id} />
-                ))}
-            </div>
-            <div ref={infiniteScrollTarget} className="flex justify-center p-2">
-                {loading && (
-                    <div className="animate-spin">
-                        <CircleNotchIcon width={32} height={32} />
+            {!matches.matches.length && <h3 className="text-center text-lg">Még nincsenek meccsek</h3>}
+            {matches.matches.length > 0 && (
+                <>
+                    <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
+                        {matches.matches.map((m) => (
+                            <MatchCard match={m} key={m.id} />
+                        ))}
                     </div>
-                )}
-                {!matches.nextDate && <div className="text-sm text-gray-500">Elérted a legkorábbi meccset</div>}
-            </div>
+                    <div ref={infiniteScrollTarget} className="flex justify-center p-2">
+                        {loading && (
+                            <div className="animate-spin">
+                                <CircleNotchIcon width={32} height={32} />
+                            </div>
+                        )}
+                        {!matches.nextDate && <div className="text-sm text-gray-500">Elérted a legkorábbi meccset</div>}
+                    </div>
+                </>
+            )}
         </>
     );
 }

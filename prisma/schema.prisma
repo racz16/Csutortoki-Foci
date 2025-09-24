@@ -15,9 +15,11 @@ model User {
 }
 
 model Match {
-  id    Int      @id @default(autoincrement())
-  date  DateTime @db.Date
-  teams Team[]
+  id         Int      @id @default(autoincrement())
+  date       DateTime
+  team       Team[]
+  locationId Int
+  location   Location @relation(fields: [locationId], references: [id])
 }
 
 model Team {
@@ -29,11 +31,13 @@ model Team {
 }
 
 model Player {
-  id         Int          @id @default(autoincrement())
-  name       String
-  mu         Float
-  sigma      Float
-  teamPlayer TeamPlayer[]
+  id              Int               @id @default(autoincrement())
+  name            String
+  mu              Float
+  sigma           Float
+  regular         Boolean
+  teamPlayer      TeamPlayer[]
+  playerStatistic PlayerStatistic[]
 }
 
 model TeamPlayer {
@@ -46,4 +50,33 @@ model TeamPlayer {
   team        Team   @relation(fields: [teamId], references: [id])
   playerId    Int
   player      Player @relation(fields: [playerId], references: [id])
+  weight      Float? @db.Real
+}
+
+model Location {
+  id    Int     @id @default(autoincrement())
+  name  String
+  match Match[]
+}
+
+model GlobalStatistic {
+  id                  Int     @id @default(autoincrement())
+  index               Int     @db.SmallInt
+  name                String
+  value               String
+  details             String?
+  extraDetails        String?
+  extraDetailsTooltip String?
+}
+
+model PlayerStatistic {
+  id                  Int     @id @default(autoincrement())
+  index               Int     @db.SmallInt
+  playerId            Int
+  player              Player  @relation(fields: [playerId], references: [id])
+  name                String
+  value               String
+  details             String?
+  extraDetails        String?
+  extraDetailsTooltip String?
 }

@@ -7,14 +7,14 @@ interface PlayerQueryResult {
     name: string;
     mu: number;
     sigma: number;
+    regular: boolean;
     _count: { teamPlayer: number };
 }
 
 export async function getPlayers(): Promise<PlayerListDto[]> {
     const matchCount = await prismaClient.match.count();
     const players = await prismaClient.player.findMany({
-        // TODO
-        where: { NOT: { name: 'KÜLSŐS' } },
+        // TODO: hide non-regular players fro, non-admin users
         include: { _count: { select: { teamPlayer: {} } } },
     });
     return players.map((p) => mapPlayerToListDto(p, matchCount));
@@ -27,5 +27,6 @@ function mapPlayerToListDto(player: PlayerQueryResult, matchCount: number): Play
         matchCount: player._count.teamPlayer,
         matchRatio: matchCount ? (player._count.teamPlayer / matchCount) * 100.0 : 0,
         rating: ordinal({ mu: player.mu, sigma: player.sigma }),
+        regular: player.regular,
     };
 }

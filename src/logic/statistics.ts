@@ -3,10 +3,13 @@ import { StatisticDto } from '@/dtos/statistic-dto';
 import { ordinal } from 'openskill';
 import { prismaClient } from './prisma';
 
-export async function getPlayerStatistics(): Promise<PlayerStatisticsDto> {
+export async function getPlayerStatistics(): Promise<PlayerStatisticsDto | null> {
     const matchCount = await prismaClient.match.count();
     // TODO
     const playerCount = await prismaClient.player.count({ where: { name: { not: 'KÜLSŐS' } } });
+    if (!playerCount) {
+        return null;
+    }
     const player = await prismaClient.player.findFirstOrThrow({
         // TODO
         where: { name: { not: 'KÜLSŐS' } },
@@ -16,9 +19,9 @@ export async function getPlayerStatistics(): Promise<PlayerStatisticsDto> {
     });
     const lastMatches = await prismaClient.match.findMany({
         omit: { id: true, date: true },
-        where: { teams: { some: { teamPlayer: { some: { playerId: player.id } } } } },
+        where: { team: { some: { teamPlayer: { some: { playerId: player.id } } } } },
         include: {
-            teams: {
+            team: {
                 include: {
                     teamPlayer: {
                         omit: {
@@ -43,11 +46,11 @@ export async function getPlayerStatistics(): Promise<PlayerStatisticsDto> {
 
     const rating = ordinal({ mu: player.mu, sigma: player.sigma });
     const matchResults = lastMatches.map((m) => {
-        const teamIndex = m.teams[0].teamPlayer.some((tp) => tp.playerId === player.id) ? 0 : 1;
-        if (m.teams[0].score == m.teams[1].score) {
+        const teamIndex = m.team[0].teamPlayer.some((tp) => tp.playerId === player.id) ? 0 : 1;
+        if (m.team[0].score == m.team[1].score) {
             return 'D';
         }
-        const winnerIndex = m.teams[0].score > m.teams[1].score ? 0 : 1;
+        const winnerIndex = m.team[0].score > m.team[1].score ? 0 : 1;
         return teamIndex === winnerIndex ? 'GY' : 'V';
     });
 
@@ -71,7 +74,7 @@ export async function getGeneralStatistics(): Promise<StatisticDto[]> {
     const matches = await prismaClient.match.findMany({
         omit: { id: true },
         include: {
-            teams: {
+            team: {
                 omit: {
                     id: true,
                     matchId: true,
@@ -79,33 +82,39 @@ export async function getGeneralStatistics(): Promise<StatisticDto[]> {
             },
         },
     });
+    if (!matches.length) {
+        return [];
+    }
     const players = await prismaClient.player.findMany({
         omit: { id: true },
         // TODO
         where: { NOT: { name: 'KÜLSŐS' } },
         include: { _count: { select: { teamPlayer: {} } } },
     });
+    if (!players.length) {
+        return [];
+    }
 
     const result: StatisticDto[] = [];
 
     const matchCount = matches.length;
-    const maxGoalsByTeam = Math.max(...matches.flatMap((m) => m.teams.map((t) => t.score)));
-    const minGoalsByTeam = Math.min(...matches.flatMap((m) => m.teams.map((t) => t.score)));
-    const maxGoals = Math.max(...matches.map((m) => m.teams[0].score + m.teams[1].score));
-    const minGoals = Math.min(...matches.map((m) => m.teams[0].score + m.teams[1].score));
+    const maxGoalsByTeam = Math.max(...matches.flatMap((m) => m.team.map((t) => t.score)));
+    const minGoalsByTeam = Math.min(...matches.flatMap((m) => m.team.map((t) => t.score)));
+    const maxGoals = Math.max(...matches.map((m) => m.team[0].score + m.team[1].score));
+    const minGoals = Math.min(...matches.map((m) => m.team[0].score + m.team[1].score));
     const biggestWin = matches.reduce(
         (prev, curr) =>
-            Math.abs(prev.teams[0].score - prev.teams[1].score) > Math.abs(curr.teams[0].score - curr.teams[1].score)
+            Math.abs(prev.team[0].score - prev.team[1].score) > Math.abs(curr.team[0].score - curr.team[1].score)
                 ? prev
                 : curr,
-        { teams: [{ score: 0 }, { score: 0 }], date: new Date() }
+        { team: [{ score: 0 }, { score: 0 }], date: new Date() }
     );
     const biggestWins = matches.filter(
         (m) =>
-            Math.abs(m.teams[0].score - m.teams[1].score) ===
-            Math.abs(biggestWin.teams[0].score - biggestWin.teams[1].score)
+            Math.abs(m.team[0].score - m.team[1].score) ===
+            Math.abs(biggestWin.team[0].score - biggestWin.team[1].score)
     );
-    const goalCount = matches.flatMap((m) => m.teams.map((t) => t.score)).reduce((prev, curr) => prev + curr);
+    const goalCount = matches.flatMap((m) => m.team.map((t) => t.score)).reduce((prev, curr) => prev + curr);
 
     const averageGoalCount = matchCount !== 0 ? goalCount / matchCount : 0;
     const biggestScore = players.reduce((prev, curr) => {
@@ -146,7 +155,7 @@ export async function getGeneralStatistics(): Promise<StatisticDto[]> {
     });
     result.push({
         id: 10,
-        value: `${biggestWin.teams[0].score} - ${biggestWin.teams[1].score}`,
+        value: `${biggestWin.team[0].score} - ${biggestWin.team[1].score}`,
         name: 'Legnagyobb győzelem',
         detail:
             biggestWin.date.toLocaleDateString('hu') + (biggestWins.length > 1 ? ` (+${biggestWins.length - 1})` : ''),

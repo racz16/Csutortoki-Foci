@@ -7,7 +7,8 @@ import { prismaClient } from './prisma';
 interface MatchQueryResult {
     id: number;
     date: Date;
-    teams: TeamQueryResult[];
+    team: TeamQueryResult[];
+    location: Location;
 }
 
 interface TeamQueryResult {
@@ -21,10 +22,16 @@ interface TeamPlayerQueryResult {
     afterMu: number;
     afterSigma: number;
     player: PlayerQueryResult;
+    weight: number | null;
 }
 
 interface PlayerQueryResult {
     id: number;
+    name: string;
+    regular: boolean;
+}
+
+interface Location {
     name: string;
 }
 
@@ -37,7 +44,7 @@ export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
         orderBy: { date: 'desc' },
         take: pageSize + 1,
         include: {
-            teams: {
+            team: {
                 orderBy: { id: 'asc' },
                 include: {
                     teamPlayer: {
@@ -48,18 +55,20 @@ export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
                 },
                 omit: { id: true, matchId: true },
             },
+            location: { omit: { id: true } },
         },
+        omit: { locationId: true },
     });
 
     const newNextDate = matches.length === pageSize + 1 ? (matches.pop()?.date?.toString() ?? null) : null;
     return { matches: matches.map((m) => mapMatchToDto(m)), nextDate: newNextDate };
 }
 
-export async function getLastMatch(): Promise<MatchDto> {
-    const match = await prismaClient.match.findFirstOrThrow({
+export async function getLastMatch(): Promise<MatchDto | null> {
+    const match = await prismaClient.match.findFirst({
         orderBy: { date: 'desc' },
         include: {
-            teams: {
+            team: {
                 orderBy: { id: 'asc' },
                 include: {
                     teamPlayer: {
@@ -70,17 +79,23 @@ export async function getLastMatch(): Promise<MatchDto> {
                 },
                 omit: { id: true, matchId: true },
             },
+            location: { omit: { id: true } },
         },
+        omit: { locationId: true },
     });
+    if (!match) {
+        return null;
+    }
     return mapMatchToDto(match);
 }
 
 function mapMatchToDto(match: MatchQueryResult): MatchDto {
-    const predictions = computePredictions(match.teams);
+    const predictions = computePredictions(match.team);
     return {
         id: match.id,
         date: match.date.toString(),
-        teams: match.teams.map((t, ti) => ({
+        location: match.location.name,
+        team: match.team.map((t, ti) => ({
             score: t.score,
             chance: predictions[ti],
             teamPlayer: t.teamPlayer.map((tp) => {
@@ -91,6 +106,8 @@ function mapMatchToDto(match: MatchQueryResult): MatchDto {
                     name: tp.player.name,
                     beforeRating: beforeRating,
                     ratingChange: afterRating - beforeRating,
+                    regular: tp.player.regular,
+                    weight: tp.weight ?? 1,
                 };
             }),
         })),
