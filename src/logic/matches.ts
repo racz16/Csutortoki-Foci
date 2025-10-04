@@ -22,7 +22,7 @@ interface TeamPlayerQueryResult {
     afterMu: number;
     afterSigma: number;
     player: PlayerQueryResult;
-    weight: number | null;
+    // weight: number | null;
 }
 
 interface PlayerQueryResult {
@@ -50,7 +50,7 @@ export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
                     teamPlayer: {
                         orderBy: { player: { name: 'asc' } },
                         include: { player: { omit: { mu: true, sigma: true } } },
-                        omit: { id: true, playerId: true, teamId: true },
+                        omit: { id: true, playerId: true, teamId: true, weight: true },
                     },
                 },
                 omit: { id: true, matchId: true },
@@ -74,7 +74,7 @@ export async function getLastMatch(): Promise<MatchDto | null> {
                     teamPlayer: {
                         orderBy: { player: { name: 'asc' } },
                         include: { player: { omit: { mu: true, sigma: true } } },
-                        omit: { id: true, playerId: true, teamId: true },
+                        omit: { id: true, playerId: true, teamId: true, weight: true },
                     },
                 },
                 omit: { id: true, matchId: true },
@@ -107,7 +107,7 @@ function mapMatchToDto(match: MatchQueryResult): MatchDto {
                     beforeRating: beforeRating,
                     ratingChange: afterRating - beforeRating,
                     regular: tp.player.regular,
-                    weight: tp.weight ?? 1,
+                    // weight: tp.weight ?? 1,
                 };
             }),
         })),

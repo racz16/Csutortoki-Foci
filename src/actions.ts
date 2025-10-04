@@ -11,7 +11,7 @@ interface TeamQueryResult {
 interface TeamPlayerQueryResult {
     id: number;
     player: PlayerQueryResult;
-    weight: number | null;
+    // weight: number | null;
 }
 
 interface PlayerQueryResult {
@@ -71,6 +71,7 @@ async function update(matchId: number): Promise<void> {
                     beforeSigma: true,
                     playerId: true,
                     teamId: true,
+                    weight: true,
                 },
             },
         },
@@ -108,18 +109,18 @@ async function updateRatings(teams: TeamQueryResult[]): Promise<void> {
 function computeResults(teams: TeamQueryResult[]): Team[] {
     const osTeams: Team[] = [];
     const osScore: number[] = [];
-    const osWeights: number[][] = [];
+    // const osWeights: number[][] = [];
     for (const team of teams) {
         osScore.push(team.score);
         const osTeam: Team = [];
-        const osWeight: number[] = [];
+        // const osWeight: number[] = [];
         for (const teamPlayer of team.teamPlayer) {
             const osRating = rating({ mu: teamPlayer.player.mu, sigma: teamPlayer.player.sigma });
             osTeam.push(osRating);
-            osWeight.push(teamPlayer.weight ?? 1);
+            // osWeight.push(teamPlayer.weight ?? 1);
         }
         osTeams.push(osTeam);
-        osWeights.push(osWeight);
+        // osWeights.push(osWeight);
     }
     return rate(osTeams, { score: osScore });
 }

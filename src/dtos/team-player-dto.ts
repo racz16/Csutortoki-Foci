@@ -4,5 +4,5 @@ export interface TeamPlayerDto {
     beforeRating: number;
     ratingChange: number;
     regular: boolean;
-    weight: number;
+    // weight: number;
 }
