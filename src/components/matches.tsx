@@ -39,7 +39,7 @@ export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX
     }, [matches, loading]);
 
     return (
-        <>
+        <div role="feed">
             {!matches.matches.length && <h3 className="text-center text-lg">Még nincsenek meccsek</h3>}
             {matches.matches.length > 0 && (
                 <>
@@ -58,6 +58,6 @@ export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX
                     </div>
                 </>
             )}
-        </>
+        </div>
     );
 }
