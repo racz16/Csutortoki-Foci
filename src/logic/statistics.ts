@@ -1,5 +1,6 @@
 import { PlayerStatisticsDto } from '@/dtos/player-statistics-dto';
 import { StatisticDto } from '@/dtos/statistic-dto';
+import { formatDate, formatNumberMaxDigits } from '@/utility';
 import { ordinal } from 'openskill';
 import { prismaClient } from './prisma';
 
@@ -52,11 +53,11 @@ export async function getPlayerStatistics(): Promise<PlayerStatisticsDto | null>
         return teamIndex === winnerIndex ? 'GY' : 'V';
     });
 
-    statistics.push({ id: 1, name: 'Pontszám', value: rating.toLocaleString('hu', { maximumFractionDigits: 2 }) });
+    statistics.push({ id: 1, name: 'Pontszám', value: formatNumberMaxDigits(rating, 2) });
     statistics.push({
         id: 2,
         name: 'Forma',
-        value: matchResults.join('-'),
+        value: matchResults.length ? matchResults.join(' ') : '-',
     });
     statistics.push({ id: 3, name: 'Meccsek száma', value: player._count.teamPlayer.toFixed() });
     statistics.push({
@@ -134,7 +135,7 @@ export async function getGeneralStatistics(): Promise<StatisticDto[]> {
     result.push({ id: 3, value: goalCount.toFixed(), name: 'Gólok száma', detail: 'Összesen' });
     result.push({
         id: 4,
-        value: averageGoalCount.toLocaleString('hu', { maximumFractionDigits: 1 }),
+        value: formatNumberMaxDigits(averageGoalCount, 1),
         name: 'Átlag gólszám',
         detail: 'Egy meccsen',
     });
@@ -154,19 +155,18 @@ export async function getGeneralStatistics(): Promise<StatisticDto[]> {
         id: 10,
         value: `${biggestWin.team[0].score} - ${biggestWin.team[1].score}`,
         name: 'Legnagyobb győzelem',
-        detail:
-            biggestWin.date.toLocaleDateString('hu') + (biggestWins.length > 1 ? ` (+${biggestWins.length - 1})` : ''),
+        detail: formatDate(biggestWin.date) + (biggestWins.length > 1 ? ` (+${biggestWins.length - 1})` : ''),
     });
     result.push({
         id: 11,
-        value: biggestScore.toLocaleString('hu', { maximumFractionDigits: 2 }),
+        value: formatNumberMaxDigits(biggestScore, 2),
         name: 'Legnagyobb pontszám',
         detail: bestPlayers[0].name + (bestPlayers.length > 1 ? ` (+${bestPlayers.length - 1})` : ''),
     });
     result.push({
         id: 12,
         name: 'Átlag pontszám',
-        value: average.toLocaleString('hu', { maximumFractionDigits: 2 }),
+        value: formatNumberMaxDigits(average, 2),
         detail: 'Összesen',
     });
 
