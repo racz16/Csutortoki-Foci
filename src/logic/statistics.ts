@@ -1,10 +1,11 @@
 import { PlayerStatisticsDto } from '@/dtos/player-statistics-dto';
 import { StatisticDto } from '@/dtos/statistic-dto';
-import { formatDate, formatNumberMaxDigits } from '@/utility';
+import { formatDate, formatNumberMaxDigits, preventPrerenderingInCiPipeline } from '@/utility';
 import { ordinal } from 'openskill';
 import { prismaClient } from './prisma';
 
 export async function getPlayerStatistics(): Promise<PlayerStatisticsDto | null> {
+    await preventPrerenderingInCiPipeline();
     const matchCount = await prismaClient.match.count();
     const playerCount = await prismaClient.player.count({ where: { regular: true } });
     if (!playerCount) {
@@ -70,6 +71,7 @@ export async function getPlayerStatistics(): Promise<PlayerStatisticsDto | null>
 }
 
 export async function getGeneralStatistics(): Promise<StatisticDto[]> {
+    await preventPrerenderingInCiPipeline();
     const matches = await prismaClient.match.findMany({
         omit: { id: true },
         include: {

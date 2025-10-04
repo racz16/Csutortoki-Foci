@@ -1,3 +1,5 @@
+import { connection } from 'next/server';
+
 export async function Wait(timeout = 1000): Promise<void> {
     return new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -34,4 +36,10 @@ export function formatNumberMinMaxDigits(value: number, minMaxDigits: number, si
         maximumFractionDigits: minMaxDigits,
         signDisplay: sign ? 'always' : undefined,
     });
+}
+
+export async function preventPrerenderingInCiPipeline(): Promise<void> {
+    if (process.env.PREVENT_PRERENDERING) {
+        await connection();
+    }
 }

@@ -1,4 +1,5 @@
 import { PlayerListDto } from '@/dtos/player-list-dto';
+import { preventPrerenderingInCiPipeline } from '@/utility';
 import { ordinal } from 'openskill';
 import { prismaClient } from './prisma';
 
@@ -12,6 +13,7 @@ interface PlayerQueryResult {
 }
 
 export async function getPlayers(): Promise<PlayerListDto[]> {
+    await preventPrerenderingInCiPipeline();
     const matchCount = await prismaClient.match.count();
     const players = await prismaClient.player.findMany({
         include: { _count: { select: { teamPlayer: {} } } },

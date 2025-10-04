@@ -1,6 +1,7 @@
 import { MatchDto } from '@/dtos/match-dto';
 import { MatchesDto } from '@/dtos/matches-dto';
 import { Prisma } from '@/generated/prisma';
+import { preventPrerenderingInCiPipeline } from '@/utility';
 import { ordinal, predictWin, rating, Team } from 'openskill';
 import { prismaClient } from './prisma';
 
@@ -36,6 +37,8 @@ interface Location {
 }
 
 export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
+    await preventPrerenderingInCiPipeline();
+
     const pageSize = 10;
     const where: Prisma.MatchWhereInput | undefined = nextDate ? { date: { lte: nextDate } } : undefined;
 
@@ -65,6 +68,7 @@ export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
 }
 
 export async function getLastMatch(): Promise<MatchDto | null> {
+    await preventPrerenderingInCiPipeline();
     const match = await prismaClient.match.findFirst({
         orderBy: { date: 'desc' },
         include: {

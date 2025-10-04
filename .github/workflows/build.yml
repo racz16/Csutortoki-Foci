@@ -1,7 +1,7 @@
 name: Build
 on: [push, pull_request]
 env:
-    NEXT_SKIP_BUILD_STATIC_GENERATION: 'true'
+    PREVENT_PRERENDERING: 1
 jobs:
     build:
         runs-on: ubuntu-latest
