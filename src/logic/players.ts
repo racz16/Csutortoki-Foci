@@ -14,7 +14,6 @@ interface PlayerQueryResult {
 export async function getPlayers(): Promise<PlayerListDto[]> {
     const matchCount = await prismaClient.match.count();
     const players = await prismaClient.player.findMany({
-        // TODO: hide non-regular players fro, non-admin users
         include: { _count: { select: { teamPlayer: {} } } },
     });
     return players.map((p) => mapPlayerToListDto(p, matchCount));

@@ -5,14 +5,12 @@ import { prismaClient } from './prisma';
 
 export async function getPlayerStatistics(): Promise<PlayerStatisticsDto | null> {
     const matchCount = await prismaClient.match.count();
-    // TODO
-    const playerCount = await prismaClient.player.count({ where: { name: { not: 'KÜLSŐS' } } });
+    const playerCount = await prismaClient.player.count({ where: { regular: true } });
     if (!playerCount) {
         return null;
     }
     const player = await prismaClient.player.findFirstOrThrow({
-        // TODO
-        where: { name: { not: 'KÜLSŐS' } },
+        where: { regular: true },
         skip: Math.floor(Math.random() * playerCount),
         take: 1,
         include: { _count: { select: { teamPlayer: {} } } },
@@ -87,8 +85,7 @@ export async function getGeneralStatistics(): Promise<StatisticDto[]> {
     }
     const players = await prismaClient.player.findMany({
         omit: { id: true },
-        // TODO
-        where: { NOT: { name: 'KÜLSŐS' } },
+        where: { regular: true },
         include: { _count: { select: { teamPlayer: {} } } },
     });
     if (!players.length) {

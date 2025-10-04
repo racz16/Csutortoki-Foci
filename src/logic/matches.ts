@@ -48,7 +48,7 @@ export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
                 orderBy: { id: 'asc' },
                 include: {
                     teamPlayer: {
-                        orderBy: { player: { name: 'asc' } },
+                        orderBy: [{ player: { regular: 'desc' } }, { player: { name: 'asc' } }],
                         include: { player: { omit: { mu: true, sigma: true } } },
                         omit: { id: true, playerId: true, teamId: true, weight: true },
                     },
