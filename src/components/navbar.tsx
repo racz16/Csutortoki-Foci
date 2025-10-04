@@ -13,7 +13,7 @@ export function Navbar(): JSX.Element {
         { id: 3, name: 'Játékosok', href: '/players' },
     ];
     return (
-        <header className="relative top-0 z-1 flex flex-col border-b-1 bg-white p-2 sm:sticky sm:flex-row lg:justify-center">
+        <header className="relative top-0 z-1 flex flex-col border-b-1 bg-white p-2 sm:sticky sm:flex-row lg:justify-center dark:bg-black">
             <Link
                 className="absolute bottom-100 rounded-lg border-1 bg-white p-2 focus:-bottom-14"
                 href="#main-content"
