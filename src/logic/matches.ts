@@ -9,7 +9,7 @@ interface MatchQueryResult {
     id: number;
     date: Date;
     team: TeamQueryResult[];
-    location: Location;
+    location: LocationQueryResult;
 }
 
 interface TeamQueryResult {
@@ -32,7 +32,7 @@ interface PlayerQueryResult {
     regular: boolean;
 }
 
-interface Location {
+interface LocationQueryResult {
     name: string;
 }
 

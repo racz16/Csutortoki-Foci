@@ -2,5 +2,7 @@ export interface StatisticDto {
     id: number;
     name: string;
     value: string;
-    detail?: string;
+    details: string | null;
+    extraDetails: string | null;
+    extraDetailsTooltip: string | null;
 }

@@ -13,9 +13,19 @@ export function StatisticCard({
 }): JSX.Element {
     return (
         <Card size={size} className={className}>
-            <div>{statistic.name}</div>
+            <div className="px-1 sm:p-0">{statistic.name}</div>
             <div className="self-center text-center text-3xl">{statistic.value}</div>
-            <div className="text-sm text-gray-600">{statistic.detail}</div>
+            <div className="flex items-center justify-between px-1 text-sm text-gray-600 sm:p-0">
+                <div>{statistic.details}</div>
+                {statistic.extraDetails && (
+                    <div
+                        className="rounded-md border-1 px-1 select-none"
+                        title={statistic.extraDetailsTooltip ? statistic.extraDetailsTooltip : undefined}
+                    >
+                        {statistic.extraDetails}
+                    </div>
+                )}
+            </div>
         </Card>
     );
 }
