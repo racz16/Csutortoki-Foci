@@ -2,11 +2,11 @@ import { SoccerBallIcon } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 import { JSX } from 'react';
 
-export default function NotFound(): JSX.Element {
+export default function NotFoundPage(): JSX.Element {
     return (
-        <div className="flex h-full items-center justify-evenly gap-6">
-            <SoccerBallIcon width="250px" height="250px" weight="thin" className="hidden shrink-0 sm:block" />
-            <div className="flex flex-col gap-6">
+        <div className="flex h-full items-center justify-evenly gap-4 sm:gap-6">
+            <SoccerBallIcon size={256} weight="thin" className="hidden shrink-0 sm:block" />
+            <div className="flex flex-col gap-4 sm:gap-6">
                 <h2 className="text-4xl">Az oldal nem létezik</h2>
                 <div>
                     <p>

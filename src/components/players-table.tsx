@@ -193,7 +193,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     <button
                         onClick={() => changePage(0)}
                         disabled={page === 0}
-                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:text-white not-disabled:hover:bg-sky-600 disabled:text-gray-500"
+                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:bg-sky-600 hover:text-white disabled:text-gray-500"
                         aria-label="Első oldal"
                     >
                         <CaretLineLeftIcon />
@@ -201,7 +201,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     <button
                         onClick={() => changePage(page - 1)}
                         disabled={page === 0}
-                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:text-white not-disabled:hover:bg-sky-600 disabled:text-gray-500"
+                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:bg-sky-600 hover:text-white disabled:text-gray-500"
                         aria-label="Előző oldal"
                     >
                         <CaretLeftIcon />
@@ -217,7 +217,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     <button
                         onClick={() => changePage(page + 1)}
                         disabled={page === pageCount - 1}
-                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:text-white not-disabled:hover:bg-sky-600 disabled:text-gray-500"
+                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:bg-sky-600 hover:text-white disabled:text-gray-500"
                         aria-label="Következő oldal"
                     >
                         <CaretRightIcon />
@@ -225,7 +225,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     <button
                         onClick={() => changePage(pageCount - 1)}
                         disabled={page === pageCount - 1}
-                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:text-white not-disabled:hover:bg-sky-600 disabled:text-gray-500"
+                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:bg-sky-600 hover:text-white disabled:text-gray-500"
                         aria-label="Utolsó oldal"
                     >
                         <CaretLineRightIcon />

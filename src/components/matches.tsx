@@ -1,8 +1,8 @@
 'use client';
 
 import { MatchesDto } from '@/dtos/matches-dto';
-import { CircleNotchIcon } from '@phosphor-icons/react/dist/ssr';
 import { JSX, useEffect, useRef, useState } from 'react';
+import { LoadingIndicator } from './loading-indicator';
 import { MatchCard } from './match-card';
 
 export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX.Element {
@@ -49,11 +49,7 @@ export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX
                         ))}
                     </div>
                     <div ref={infiniteScrollTarget} className="flex justify-center p-2">
-                        {loading && (
-                            <div className="animate-spin">
-                                <CircleNotchIcon width={32} height={32} />
-                            </div>
-                        )}
+                        {loading && <LoadingIndicator size={32} />}
                         {!matches.nextDate && <div className="text-sm text-gray-500">Elérted a legkorábbi meccset</div>}
                     </div>
                 </>

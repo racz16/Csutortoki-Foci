@@ -16,7 +16,7 @@ export function RandomPlayerCard({ playerStatistics }: { playerStatistics: Playe
                 </h3>
                 <div className="flex grow gap-1 sm:gap-2">
                     <div className="hidden aspect-[9/16] h-full items-center justify-center rounded-lg border-1 lg:flex">
-                        <UserCircleIcon width={64} height={64} weight="thin" alt="" />
+                        <UserCircleIcon size={64} weight="thin" alt="" />
                     </div>
                     <div className="flex w-full flex-col gap-1 sm:gap-2">
                         <div className="grid grow grid-cols-2 gap-1 sm:gap-2">
