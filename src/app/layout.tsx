@@ -1,4 +1,5 @@
 import { Navbar } from '@/components/navbar';
+import SessionProvider from '@/components/session-provider';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { JSX, ReactNode } from 'react';
@@ -20,18 +21,16 @@ export const metadata: Metadata = {
     icons: { icon: './favicon.ico' },
 };
 
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: ReactNode;
-}>): JSX.Element {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
     return (
         <html lang="hu">
-            <body className={`${geistSans.variable} ${geistMono.variable} flex h-screen flex-col antialiased`}>
-                <Navbar />
-                <main id="main-content" className="flex h-full justify-center focus:outline-0" tabIndex={-1}>
-                    <div className="m-2 mt-4 w-full sm:m-2 sm:mt-4 lg:w-5xl">{children}</div>
-                </main>
+            <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
+                <SessionProvider>
+                    <Navbar />
+                    <main id="main-content" className="flex grow-1 justify-center focus:outline-0" tabIndex={-1}>
+                        <div className="m-2 mt-4 w-full sm:m-2 sm:mt-4 lg:w-5xl">{children}</div>
+                    </main>
+                </SessionProvider>
             </body>
         </html>
     );

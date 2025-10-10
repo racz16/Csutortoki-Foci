@@ -1,21 +1,23 @@
-import { MoonIcon, SignInIcon, SoccerBallIcon } from '@phosphor-icons/react/dist/ssr';
+import { MoonIcon, SoccerBallIcon } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 import { JSX } from 'react';
 import { HamburgerButton } from './hamburger-button';
 import { NavLink } from './nav-link';
 import { NavbarMenu } from './navbar-menu';
 import { NavbarProvider } from './navbar-provider';
+import { NavbarUserSection } from './navbar-user-section';
 
 export function Navbar(): JSX.Element {
+    const origin = process.env.ORIGIN!;
     const navbarLinks = [
         { id: 1, name: 'Főoldal', href: '/' },
         { id: 2, name: 'Meccsek', href: '/matches' },
         { id: 3, name: 'Játékosok', href: '/players' },
     ];
     return (
-        <header className="relative top-0 z-1 flex flex-col border-b-1 bg-white p-2 sm:sticky sm:flex-row lg:justify-center dark:bg-black">
+        <header className="sticky top-0 z-1 flex flex-col justify-center border-b-1 bg-white p-2 sm:flex-row dark:bg-black">
             <Link
-                className="absolute bottom-100 rounded-lg border-1 bg-white p-2 focus:-bottom-14"
+                className="absolute bottom-100 self-center rounded-lg border-1 bg-white p-2 focus:-bottom-12 sm:focus:-bottom-14"
                 href="#main-content"
             >
                 Ugrás a tartalomhoz
@@ -36,9 +38,7 @@ export function Navbar(): JSX.Element {
                         ))}
                     </nav>
                     <div className="flex items-baseline gap-2 sm:gap-4">
-                        <Link aria-label="Bejelentkezés" href="#">
-                            <SignInIcon />
-                        </Link>
+                        <NavbarUserSection origin={origin} />
                         <button aria-label="Váltás sötét módra">
                             <MoonIcon />
                         </button>
