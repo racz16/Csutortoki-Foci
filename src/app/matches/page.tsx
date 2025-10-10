@@ -1,4 +1,5 @@
 import { Matches } from '@/components/matches';
+import { NewMatchButton } from '@/components/new-match-button';
 import { MatchesSkeleton } from '@/components/skeletons/matches-skeleton';
 import { getMatches } from '@/logic/matches';
 import { JSX, Suspense } from 'react';
@@ -6,11 +7,9 @@ import { JSX, Suspense } from 'react';
 export default async function MatchesPage(): Promise<JSX.Element> {
     return (
         <div className="flex flex-col gap-2 sm:gap-4">
-            <div className="flex items-baseline justify-between">
-                <h2 className="mt-1 text-xl sm:mt-2">Meccsek</h2>
-                {/* <button className="active::text-white rounded-lg border-1 p-1 hover:bg-gray-700 hover:text-white active:bg-black">
-                    Meccs létrehozása
-                </button> */}
+            <div className="flex h-8.5 items-center justify-between">
+                <h2 className="text-xl">Meccsek</h2>
+                <NewMatchButton />
             </div>
             <Suspense fallback={<MatchesSkeleton />}>
                 <MatchesLazy />

@@ -1,8 +1,16 @@
 'use client';
 
 import { PlayerListDto } from '@/dtos/player-list-dto';
-import { formatNumberMinMaxDigits } from '@/utility';
-import { CaretLeftIcon, CaretLineLeftIcon, CaretLineRightIcon, CaretRightIcon } from '@phosphor-icons/react';
+import { formatNumberMinMaxDigits, isAdmin } from '@/utility';
+import {
+    CaretLeftIcon,
+    CaretLineLeftIcon,
+    CaretLineRightIcon,
+    CaretRightIcon,
+    PencilIcon,
+    TrashIcon,
+} from '@phosphor-icons/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ChangeEvent, JSX, useEffect, useState } from 'react';
 import { Card } from './card';
@@ -15,6 +23,9 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState<number | null>(null);
     const [hideNonRegulars, setHideNonRegulars] = useState<boolean | null>(null);
+
+    const session = useSession();
+    const admin = isAdmin(session);
 
     useEffect(() => {
         setPageSize(getInitialPageSize());
@@ -111,6 +122,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                                 </button>
                             </th>
                         ))}
+                        {admin && <th scope="col">Műveletek</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -136,11 +148,37 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                             <td className="hidden border-y-1 sm:table-cell">
                                 <div className="m-auto w-12 p-1 text-right">{p.matchRatio.toFixed()}%</div>
                             </td>
-                            <td className="rounded-e-md border-1 border-s-0">
+                            <td className={` ${admin ? 'border-y-1' : 'rounded-e-md border-1 border-s-0'}`}>
                                 <div className="m-auto w-11 p-1 text-right">
                                     {formatNumberMinMaxDigits(p.rating, 2)}
                                 </div>
                             </td>
+                            {admin && (
+                                <td className="rounded-e-md border-1 border-s-0">
+                                    <div className="flex justify-center gap-2">
+                                        <button
+                                            onClick={() => alert('Játékos szerkesztése')}
+                                            className="cursor-pointer text-sky-800 hover:text-sky-600"
+                                            aria-label="Szerkesztés"
+                                        >
+                                            <PencilIcon />
+                                        </button>
+                                        <button
+                                            onClick={() => alert('Játékos örlése')}
+                                            disabled={p.matchCount > 0}
+                                            className="text-red-800 not-disabled:cursor-pointer hover:text-red-600 disabled:text-gray-500"
+                                            title={
+                                                p.matchCount > 0
+                                                    ? 'Csak a meccs nélküli játékosok törölhetők'
+                                                    : undefined
+                                            }
+                                            aria-label="Törlés"
+                                        >
+                                            <TrashIcon />
+                                        </button>
+                                    </div>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>

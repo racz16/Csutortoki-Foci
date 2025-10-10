@@ -12,13 +12,17 @@ export default async function MainPage({ randomPlayer }: { randomPlayer: ReactNo
         <div className="flex flex-col gap-2 sm:gap-4">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
                 <section className="flex flex-col gap-2 sm:grid-cols-2 sm:gap-4">
-                    <h2 className="mt-1 text-xl sm:mt-2">Utolsó meccs</h2>
+                    <div className="flex h-8.5 shrink-0 items-center">
+                        <h2 className="text-xl">Utolsó meccs</h2>
+                    </div>
                     <Suspense fallback={<MatchCardSkeleton />}>
                         <LastMatchLazy />
                     </Suspense>
                 </section>
                 <section className="flex flex-col gap-2 sm:grid-cols-2 sm:gap-4">
-                    <h2 className="mt-1 text-xl sm:mt-2">Véletlen játékos</h2>
+                    <div className="flex h-8.5 shrink-0 items-center">
+                        <h2 className="text-xl">Véletlen játékos</h2>
+                    </div>
                     <Suspense fallback={<PlayerStatisticsCardSkeleton />}>{randomPlayer}</Suspense>
                 </section>
             </div>
@@ -32,10 +36,6 @@ export default async function MainPage({ randomPlayer }: { randomPlayer: ReactNo
                 <Suspense fallback={<GlobalStatisticsSkeleton />}>
                     <GlobalStatisticsLazy />
                 </Suspense>
-                {/* <div className="flex flex-col items-center justify-around">
-                    <UpdateAllMatchesButton />
-                    <UpdateLastMatchButton />
-                </div> */}
             </section>
         </div>
     );

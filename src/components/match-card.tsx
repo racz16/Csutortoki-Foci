@@ -5,6 +5,8 @@ import { Chivo_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { Fragment, JSX } from 'react';
 import { Card } from './card';
+import { DeleteMatchButton } from './delete-match-button';
+import { EditMatchButton } from './edit-match-button';
 
 export const chivoMonoFont = Chivo_Mono({ weight: '400', subsets: ['latin'] });
 
@@ -17,19 +19,27 @@ export function MatchCard({ match }: { match: MatchDto }): JSX.Element {
                     <div className="text-center">{formatDateTime(date)}</div>
                     <div className="text-center">{match.location}</div>
                 </div>
-                <div
-                    className={`${chivoMonoFont.className} flex justify-center text-4xl`}
-                    aria-label={`Eredmény: ${match.team[0].score}-${match.team[1].score}`}
-                >
-                    <span className="w-1/2 text-right" aria-hidden="true">
-                        {match.team[0].score}
-                    </span>
-                    <span className="px-2" aria-hidden="true">
-                        -
-                    </span>
-                    <span className="w-1/2" aria-hidden="true">
-                        {match.team[1].score}
-                    </span>
+                <div className="flex items-center">
+                    <div
+                        className={`${chivoMonoFont.className} order-2 flex grow-1 text-4xl`}
+                        aria-label={`Eredmény: ${match.team[0].score}-${match.team[1].score}`}
+                    >
+                        <span className="w-1/2 text-right" aria-hidden="true">
+                            {match.team[0].score}
+                        </span>
+                        <span className="px-2" aria-hidden="true">
+                            -
+                        </span>
+                        <span className="w-1/2" aria-hidden="true">
+                            {match.team[1].score}
+                        </span>
+                    </div>
+                    <div className="order-1">
+                        <EditMatchButton />
+                    </div>
+                    <div className="order-3">
+                        <DeleteMatchButton />
+                    </div>
                 </div>
                 <div className="grid grid-flow-col grid-cols-2 items-stretch gap-x-2 gap-y-1">
                     {match.team.map((t, i) => (
