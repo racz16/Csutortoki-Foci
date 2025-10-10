@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { ordinal, rate, rating, Team } from 'openskill';
 import { prismaClient } from './logic/prisma';
 import { formatDate, formatNumberMaxDigits } from './utility';
@@ -79,6 +80,7 @@ export async function updateAll(): Promise<void> {
     for (const match of matches) {
         await update(match.id);
     }
+    revalidate();
 }
 
 async function init(): Promise<void> {
@@ -106,6 +108,7 @@ export async function updateLast(): Promise<void> {
     if (match) {
         await update(match.id);
     }
+    revalidate();
 }
 
 async function update(matchId: number): Promise<void> {
@@ -455,4 +458,10 @@ function getAverageRatingGlobalStatistic(players: PlayerGlobalStatisticsQueryRes
         value: formatNumberMaxDigits(averageRating, 2),
         details: 'Összesen',
     };
+}
+
+function revalidate(): void {
+    revalidatePath('/');
+    revalidatePath('/matches');
+    revalidatePath('/players');
 }

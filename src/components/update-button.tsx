@@ -7,9 +7,9 @@ export function UpdateAllMatchesButton(): JSX.Element {
     return (
         <button
             onClick={updateAll}
-            className="rounded-md border-1 p-2 hover:bg-black hover:text-white active:bg-gray-700"
+            className="cursor-pointer rounded-md border-1 p-1 text-sky-800 hover:bg-sky-600 hover:text-white"
         >
-            Update all matches
+            Összes meccs frissítése
         </button>
     );
 }
@@ -18,9 +18,9 @@ export function UpdateLastMatchButton(): JSX.Element {
     return (
         <button
             onClick={updateLast}
-            className="rounded-md border-1 p-2 hover:bg-black hover:text-white active:bg-gray-700"
+            className="cursor-pointer rounded-md border-1 p-1 text-sky-800 hover:bg-sky-600 hover:text-white"
         >
-            Update last match
+            Utolsó meccs frissítése
         </button>
     );
 }
