@@ -1,6 +1,5 @@
 import { SessionContextValue } from 'next-auth/react';
 import { connection } from 'next/server';
-import { ExtendedSession } from './app/api/auth/[...nextauth]/route';
 
 export async function Wait(timeout = 1000): Promise<void> {
     return new Promise<void>((resolve) => {
@@ -47,5 +46,5 @@ export async function preventPrerenderingInCiPipeline(): Promise<void> {
 }
 
 export function isAdmin(session: SessionContextValue): boolean {
-    return session.status === 'authenticated' && (session.data as ExtendedSession).admin;
+    return session.status === 'authenticated' && session.data.admin;
 }

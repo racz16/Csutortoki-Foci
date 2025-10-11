@@ -1,5 +1,5 @@
 import { prismaClient } from '@/logic/prisma';
-import NextAuth, { AuthOptions, Profile, Session } from 'next-auth';
+import NextAuth, { AuthOptions, Session } from 'next-auth';
 import { AdapterUser } from 'next-auth/adapters';
 import { JWT } from 'next-auth/jwt';
 import AzureAdProvider from 'next-auth/providers/azure-ad';
@@ -7,14 +7,6 @@ import DiscordProvider from 'next-auth/providers/discord';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import RedditProvider from 'next-auth/providers/reddit';
-
-export interface ExtendedSession extends Session {
-    admin: boolean;
-}
-
-interface RedditProfile extends Profile {
-    icon_img?: string;
-}
 
 const authOptions: AuthOptions = {
     providers: [
@@ -42,14 +34,7 @@ const authOptions: AuthOptions = {
     ],
     pages: { signIn: '/sign-in' },
     callbacks: {
-        async session({
-            session,
-            token,
-        }: {
-            session: Session;
-            token: JWT;
-            user: AdapterUser;
-        }): Promise<ExtendedSession> {
+        async session({ session, token }: { session: Session; token: JWT; user: AdapterUser }): Promise<Session> {
             const user = await prismaClient.user.findFirst({
                 where: { email: session.user?.email ?? '' },
                 omit: { email: true, id: true },
@@ -60,8 +45,8 @@ const authOptions: AuthOptions = {
             return { ...session, admin: user?.admin ?? false };
         },
         async jwt({ token, profile, account }) {
-            if (account?.provider === 'reddit' && !token.picture && profile) {
-                token.picture = (profile as RedditProfile).icon_img;
+            if (account?.provider === 'reddit' && !token.picture && profile?.icon_img) {
+                token.picture = profile.icon_img;
             }
             return token;
         },
