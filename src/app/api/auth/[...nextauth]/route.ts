@@ -1,4 +1,4 @@
-import { prismaClient } from '@/logic/prisma';
+import { isUserAdmin } from '@/logic/users';
 import NextAuth, { AuthOptions, Session } from 'next-auth';
 import { AdapterUser } from 'next-auth/adapters';
 import { JWT } from 'next-auth/jwt';
@@ -35,14 +35,11 @@ const authOptions: AuthOptions = {
     pages: { signIn: '/sign-in' },
     callbacks: {
         async session({ session, token }: { session: Session; token: JWT; user: AdapterUser }): Promise<Session> {
-            const user = await prismaClient.user.findFirst({
-                where: { email: session.user?.email ?? '' },
-                omit: { email: true, id: true },
-            });
+            const admin = session.user?.email ? await isUserAdmin(session.user.email) : false;
             if (session.user && !session.user.image) {
                 session.user.image = token.picture;
             }
-            return { ...session, admin: user?.admin ?? false };
+            return { ...session, admin };
         },
         async jwt({ token, profile, account }) {
             if (account?.provider === 'reddit' && !token.picture && profile?.icon_img) {
