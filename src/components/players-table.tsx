@@ -55,7 +55,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
         localStorage.setItem(PAGE_SIZE_KEY, newPageSize.toString());
         setPageSize(newPageSize);
         const playerCount = players.filter((p) => !hideNonRegulars || p.regular).length;
-        const pageCount = Math.ceil(playerCount / newPageSize);
+        const pageCount = Math.max(Math.ceil(playerCount / newPageSize), 1);
         if (pageCount <= page) {
             changePage(pageCount - 1);
         }
@@ -70,7 +70,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
         localStorage.setItem(HIDE_NON_REGULARS_KEY, newHideNonRegulars.toString());
         setHideNonRegulars(newHideNonRegulars);
         const playerCount = players.filter((p) => !newHideNonRegulars || p.regular).length;
-        const pageCount = Math.ceil(playerCount / pageSize);
+        const pageCount = Math.max(Math.ceil(playerCount / pageSize), 1);
         if (pageCount <= page) {
             changePage(pageCount - 1);
         }
@@ -93,8 +93,11 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
     });
 
     const filteredPlayers = players.filter((p) => !hideNonRegulars || p.regular);
-    const pageCount = Math.ceil(filteredPlayers.length / pageSize);
+    const pageCount = Math.max(Math.ceil(filteredPlayers.length / pageSize), 1);
     const pagedPlayers = filteredPlayers.filter((p, i) => page * pageSize <= i && i < page * pageSize + pageSize);
+
+    const pageStartIndex = Math.min(page * pageSize + 1, filteredPlayers.length);
+    const pageEndIndex = Math.min(page * pageSize + pageSize, filteredPlayers.length);
 
     return (
         <Card className="pt-0 sm:pt-0">
@@ -208,11 +211,9 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     </button>
                     <div
                         className="self-center"
-                        aria-label={`${page * pageSize + 1}-${Math.min(page * pageSize + pageSize, filteredPlayers.length)} játékos az oldalon, ${filteredPlayers.length} összesen`}
+                        aria-label={`${pageStartIndex}-${pageEndIndex} játékos az oldalon, ${filteredPlayers.length} összesen`}
                     >
-                        <div aria-hidden="true">
-                            {`${page * pageSize + 1}-${Math.min(page * pageSize + pageSize, filteredPlayers.length)} / ${filteredPlayers.length}`}
-                        </div>
+                        <div aria-hidden="true">{`${pageStartIndex}-${pageEndIndex} / ${filteredPlayers.length}`}</div>
                     </div>
                     <button
                         onClick={() => changePage(page + 1)}
