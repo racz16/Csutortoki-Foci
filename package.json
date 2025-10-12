@@ -15,6 +15,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
+        "vercel-build": "prisma generate && prisma migrate deploy && next build",
         "build": "next build",
         "start": "next start",
         "eslint": "eslint",
