@@ -14,6 +14,9 @@ export function NavbarUserSection({ origin }: { origin: string }): JSX.Element {
     const queryParams = new URLSearchParams();
     queryParams.append('callbackUrl', pathname !== '/sign-in' ? `${origin}${pathname}` : origin);
     let loggedIn = 'Bejelentkezve';
+    if (session.data?.provider) {
+        loggedIn += ` ${session.data.provider}-fiókkal`;
+    }
     if (session.data?.user?.name) {
         loggedIn += ` mint ${session.data.user.name}`;
     }

@@ -1,7 +1,5 @@
 import { isUserAdmin } from '@/logic/users';
 import NextAuth, { AuthOptions, Session } from 'next-auth';
-import { AdapterUser } from 'next-auth/adapters';
-import { JWT } from 'next-auth/jwt';
 import AzureAdProvider from 'next-auth/providers/azure-ad';
 import DiscordProvider from 'next-auth/providers/discord';
 import GithubProvider from 'next-auth/providers/github';
@@ -34,21 +32,42 @@ const authOptions: AuthOptions = {
     ],
     pages: { signIn: '/sign-in' },
     callbacks: {
-        async session({ session, token }: { session: Session; token: JWT; user: AdapterUser }): Promise<Session> {
+        async session({ session, token }): Promise<Session> {
             const admin = session.user?.email ? await isUserAdmin(session.user.email) : false;
             if (session.user && !session.user.image) {
                 session.user.image = token.picture;
             }
+            session.provider = token.provider;
             return { ...session, admin };
         },
         async jwt({ token, profile, account }) {
             if (account?.provider === 'reddit' && !token.picture && profile?.icon_img) {
                 token.picture = profile.icon_img;
             }
+            if (account?.provider && !token.provider) {
+                token.provider = getProviderName(account.provider);
+            }
             return token;
         },
     },
 };
+
+function getProviderName(providerId: string): string {
+    switch (providerId) {
+        case 'google':
+            return 'Google';
+        case 'azure-ad':
+            return 'Microsoft';
+        case 'reddit':
+            return 'Reddit';
+        case 'discord':
+            return 'Discord';
+        case 'github':
+            return 'GitHub';
+        default:
+            return providerId;
+    }
+}
 
 const handler = NextAuth(authOptions);
 
