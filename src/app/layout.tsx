@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: 'Csütörtöki Foci',
     description: 'Statisztikák a Csütörtöki Focihoz',
-    icons: { icon: './favicon.ico' },
+    icons: { icon: '/favicon.ico' },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
