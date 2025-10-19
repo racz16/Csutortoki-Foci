@@ -12,6 +12,9 @@ import { UserCircleIcon } from '@phosphor-icons/react/dist/ssr';
 import { JSX, Suspense } from 'react';
 
 export async function generateStaticParams(): Promise<{ id: string }[]> {
+    if (process.env.PREVENT_PRERENDERING) {
+        return [];
+    }
     const players = await prismaClient.player.findMany({ omit: { mu: true, sigma: true, name: true, regular: true } });
     return players.map((p) => ({ id: p.id.toFixed() }));
 }
