@@ -1,4 +1,4 @@
-import { NewPlayerButton } from '@/components/new-player-button';
+import { NewPlayerButton } from '@/components/buttons/new-player-button';
 import { PlayersTable } from '@/components/players-table';
 import { PlayersTableSkeleton } from '@/components/skeletons/players-table-skeleton';
 import { getPlayers } from '@/logic/players';

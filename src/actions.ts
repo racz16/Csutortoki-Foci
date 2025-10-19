@@ -3,7 +3,30 @@
 import { revalidatePath } from 'next/cache';
 import { ordinal, rate, rating, Team } from 'openskill';
 import { prismaClient } from './logic/prisma';
-import { formatDate, formatNumberMaxDigits } from './utility';
+import {
+    GLOBAL_STATISTIC_AVERAGE_GOAL_COUNT_INDEX,
+    GLOBAL_STATISTIC_AVERAGE_RATING_INDEX,
+    GLOBAL_STATISTIC_BIGGEST_VICTORY_INDEX,
+    GLOBAL_STATISTIC_GOAL_COUNT_INDEX,
+    GLOBAL_STATISTIC_MATCH_COUNT_INDEX,
+    GLOBAL_STATISTIC_MAX_GOAL_COUNT_BY_TEAM_INDEX,
+    GLOBAL_STATISTIC_MAX_GOAL_COUNT_INDEX,
+    GLOBAL_STATISTIC_MAX_MATCH_COUNT_BY_PLAYER_INDEX,
+    GLOBAL_STATISTIC_MAX_RATING_INDEX,
+    GLOBAL_STATISTIC_MIN_GOAL_COUNT_BY_TEAM_INDEX,
+    GLOBAL_STATISTIC_MIN_GOAL_COUNT_INDEX,
+    GLOBAL_STATISTIC_PLAYER_COUNT_INDEX,
+    PLAYER_STATISTIC_DRAW_MATCH_COUNT_INDEX,
+    PLAYER_STATISTIC_FORM_INDEX,
+    PLAYER_STATISTIC_LOST_MATCH_COUNT_INDEX,
+    PLAYER_STATISTIC_MATCH_COUNT_INDEX,
+    PLAYER_STATISTIC_MATCH_RATIO_INDEX,
+    PLAYER_STATISTIC_MAX_RATING_INDEX,
+    PLAYER_STATISTIC_MIN_RATING_INDEX,
+    PLAYER_STATISTIC_RATING_INDEX,
+    PLAYER_STATISTIC_WON_MATCH_COUNT_INDEX,
+} from './logic/statistics';
+import { formatDate, formatNumberMaxDigits, formatNumberMinMaxDigits } from './utility';
 
 interface TeamRatingQueryResult {
     score: number;
@@ -22,28 +45,20 @@ interface PlayerRatingQueryResult {
     sigma: number;
 }
 
-interface PlayerPlayerStatisticsQueryResult {
-    mu: number;
-    sigma: number;
-}
-
-interface MatchePlayerStatisticsQueryResult {
-    team: TeamPlayerStatisticsQueryResult[];
-}
-
-interface TeamPlayerStatisticsQueryResult {
-    score: number;
-    teamPlayer: TeamPlayerPlayerStatisticsQueryResult[];
-}
-
 interface TeamPlayerPlayerStatisticsQueryResult {
     playerId: number;
+    afterMu: number;
+    afterSigma: number;
 }
 
 interface PlayerStatisticUpdate {
     index: number;
     name: string;
     value: string;
+    valueAriaLabel?: string | null;
+    details?: string | null;
+    extraDetails?: string | null;
+    extraDetailsTooltip?: string | null;
 }
 
 interface MatchGlobalStatisticsQueryResult {
@@ -187,12 +202,7 @@ function computeResults(teams: TeamRatingQueryResult[]): Team[] {
 
 async function updatePlayerStatistics(playerId: number): Promise<void> {
     const matchCount = await prismaClient.match.count();
-    const player = await prismaClient.player.findFirstOrThrow({
-        where: { id: playerId },
-        include: { _count: { select: { teamPlayer: {} } } },
-        omit: { id: true, name: true, regular: true },
-    });
-    const lastMatches = await prismaClient.match.findMany({
+    const matches = await prismaClient.match.findMany({
         where: { team: { some: { teamPlayer: { some: { playerId } } } } },
         include: {
             team: {
@@ -201,8 +211,6 @@ async function updatePlayerStatistics(playerId: number): Promise<void> {
                         where: { playerId },
                         omit: {
                             id: true,
-                            afterMu: true,
-                            afterSigma: true,
                             beforeMu: true,
                             beforeSigma: true,
                             teamId: true,
@@ -213,7 +221,6 @@ async function updatePlayerStatistics(playerId: number): Promise<void> {
                 omit: { id: true, matchId: true },
             },
         },
-        take: 3,
         orderBy: { date: 'desc' },
         omit: { id: true, date: true, locationId: true },
     });
@@ -222,11 +229,26 @@ async function updatePlayerStatistics(playerId: number): Promise<void> {
         omit: { playerId: true, details: true, extraDetails: true, extraDetailsTooltip: true, name: true, value: true },
     });
 
+    const matchResults = matches.map((m) => {
+        if (m.team[0].score == m.team[1].score) {
+            return 0;
+        }
+        const teamIndex = m.team[0].teamPlayer.some((tp) => tp.playerId === playerId) ? 0 : 1;
+        const winnerIndex = m.team[0].score > m.team[1].score ? 0 : 1;
+        return teamIndex === winnerIndex ? 1 : -1;
+    });
+    const teamPlayers = matches.flatMap((m) => m.team.flatMap((t) => t.teamPlayer));
+
     const newStatistics: PlayerStatisticUpdate[] = [
-        getRatingPlayerStatistic(player),
-        getFormPlayerStatistic(playerId, lastMatches),
-        getMatchCountPlayerStatistic(player._count.teamPlayer),
-        getMatchRatioPlayerStatistic(matchCount, player._count.teamPlayer),
+        getRatingPlayerStatistic(teamPlayers),
+        getMaxRatingPlayerStatistic(teamPlayers),
+        getMinRatingPlayerStatistic(teamPlayers),
+        getWonMatchCountPlayerStatistic(matchResults),
+        getDrawMatchCountPlayerStatistic(matchResults),
+        getLostMatchCountPlayerStatistic(matchResults),
+        getMatchCountPlayerStatistic(teamPlayers.length),
+        getMatchRatioPlayerStatistic(matchCount, teamPlayers.length),
+        getFormPlayerStatistic(matchResults),
     ];
 
     for (const newStatistic of newStatistics) {
@@ -240,36 +262,123 @@ async function updatePlayerStatistics(playerId: number): Promise<void> {
             await prismaClient.playerStatistic.create({ data: { playerId, ...newStatistic } });
         }
     }
+    revalidatePlayer(playerId);
 }
 
-function getRatingPlayerStatistic(player: PlayerPlayerStatisticsQueryResult): PlayerStatisticUpdate {
-    const rating = ordinal({ mu: player.mu, sigma: player.sigma });
-    return { index: 1, name: 'Pontszám', value: formatNumberMaxDigits(rating, 2) };
+function getRatingPlayerStatistic(teamPlayers: TeamPlayerPlayerStatisticsQueryResult[]): PlayerStatisticUpdate {
+    const rating = teamPlayers.length ? ordinal({ mu: teamPlayers[0].afterMu, sigma: teamPlayers[0].afterSigma }) : 0;
+    return {
+        index: PLAYER_STATISTIC_RATING_INDEX,
+        name: 'Pontszám',
+        value: formatNumberMinMaxDigits(rating, 2),
+        details: 'Jelenleg',
+    };
 }
 
-function getFormPlayerStatistic(
-    playerId: number,
-    lastMatches: MatchePlayerStatisticsQueryResult[]
-): PlayerStatisticUpdate {
-    const matchResults = lastMatches.map((m) => {
-        if (m.team[0].score == m.team[1].score) {
-            return 'D';
-        }
-        const teamIndex = m.team[0].teamPlayer.some((tp) => tp.playerId === playerId) ? 0 : 1;
-        const winnerIndex = m.team[0].score > m.team[1].score ? 0 : 1;
-        return teamIndex === winnerIndex ? 'GY' : 'V';
-    });
-    const form = matchResults.length ? matchResults.join(' ') : '-';
-    return { index: 2, name: 'Forma', value: form };
+function getMaxRatingPlayerStatistic(teamPlayers: TeamPlayerPlayerStatisticsQueryResult[]): PlayerStatisticUpdate {
+    const maxRating = teamPlayers.reduce(
+        (prev, curr) => Math.max(prev, ordinal({ mu: curr.afterMu, sigma: curr.afterSigma })),
+        0
+    );
+    return {
+        index: PLAYER_STATISTIC_MAX_RATING_INDEX,
+        name: 'Legnagyobb pontszám',
+        value: formatNumberMinMaxDigits(maxRating, 2),
+        details: 'Valaha',
+    };
+}
+
+function getMinRatingPlayerStatistic(teamPlayers: TeamPlayerPlayerStatisticsQueryResult[]): PlayerStatisticUpdate {
+    const minRating = teamPlayers.reduce(
+        (prev, curr) => Math.min(prev, ordinal({ mu: curr.afterMu, sigma: curr.afterSigma })),
+        0
+    );
+    return {
+        index: PLAYER_STATISTIC_MIN_RATING_INDEX,
+        name: 'Legkisebb pontszám',
+        value: formatNumberMinMaxDigits(minRating, 2),
+        details: 'Valaha',
+    };
+}
+
+function getWonMatchCountPlayerStatistic(matchResults: number[]): PlayerStatisticUpdate {
+    return {
+        index: PLAYER_STATISTIC_WON_MATCH_COUNT_INDEX,
+        name: 'Győzelmek száma',
+        value: matchResults.filter((mr) => mr === 1).length.toFixed(),
+        details: 'Összesen',
+    };
+}
+
+function getDrawMatchCountPlayerStatistic(matchResults: number[]): PlayerStatisticUpdate {
+    return {
+        index: PLAYER_STATISTIC_DRAW_MATCH_COUNT_INDEX,
+        name: 'Döntetlenek száma',
+        value: matchResults.filter((mr) => mr === 0).length.toFixed(),
+        details: 'Összesen',
+    };
+}
+
+function getLostMatchCountPlayerStatistic(matchResults: number[]): PlayerStatisticUpdate {
+    return {
+        index: PLAYER_STATISTIC_LOST_MATCH_COUNT_INDEX,
+        name: 'Vereségek száma',
+        value: matchResults.filter((mr) => mr === -1).length.toFixed(),
+        details: 'Összesen',
+    };
 }
 
 function getMatchCountPlayerStatistic(playerMatchCount: number): PlayerStatisticUpdate {
-    return { index: 3, name: 'Meccsek száma', value: playerMatchCount.toFixed() };
+    return {
+        index: PLAYER_STATISTIC_MATCH_COUNT_INDEX,
+        name: 'Meccsek száma',
+        value: playerMatchCount.toFixed(),
+        details: 'Összesen',
+    };
 }
 
 function getMatchRatioPlayerStatistic(matchCount: number, playerMatchCount: number): PlayerStatisticUpdate {
     const matchRatio = ((matchCount ? playerMatchCount / matchCount : 0) * 100).toFixed() + '%';
-    return { index: 4, name: 'Részvétel', value: matchRatio };
+    return { index: PLAYER_STATISTIC_MATCH_RATIO_INDEX, name: 'Részvétel', value: matchRatio, details: 'Összesen' };
+}
+
+function getFormPlayerStatistic(matchResults: number[]): PlayerStatisticUpdate {
+    const form = matchResults.length
+        ? matchResults
+              .slice(0, 3)
+              .map((mr) => mapMatchResultToInitial(mr))
+              .join(' ')
+        : '-';
+    return {
+        index: PLAYER_STATISTIC_FORM_INDEX,
+        name: 'Forma',
+        value: form,
+        valueAriaLabel: matchResults
+            .slice(0, 3)
+            .map((mr) => mapMatchResultToWord(mr))
+            .join(', '),
+        details: 'Az utolsó 3 meccsen',
+    };
+}
+
+function mapMatchResultToWord(result: number): string {
+    if (result > 0) {
+        return 'győzelem';
+    } else if (result < 0) {
+        return 'vereség';
+    } else {
+        return 'döntetlen';
+    }
+}
+
+function mapMatchResultToInitial(result: number): string {
+    if (result > 0) {
+        return 'GY';
+    } else if (result < 0) {
+        return 'V';
+    } else {
+        return 'D';
+    }
 }
 
 async function updateGlobalStatistics(): Promise<void> {
@@ -329,22 +438,37 @@ async function updateGlobalStatistics(): Promise<void> {
 }
 
 function getMatchCountGlobalStatistic(matchCount: number): GlobalStatisticUpdate {
-    return { index: 1, value: matchCount.toFixed(), name: 'Meccsek száma', details: 'Összesen' };
+    return {
+        index: GLOBAL_STATISTIC_MATCH_COUNT_INDEX,
+        value: matchCount.toFixed(),
+        name: 'Meccsek száma',
+        details: 'Összesen',
+    };
 }
 
 function getPlayerCountGlobalStatistic(players: PlayerGlobalStatisticsQueryResult[]): GlobalStatisticUpdate {
     const playerCount = players.filter((p) => p._count.teamPlayer > 0).length;
-    return { index: 2, name: 'Játékosok száma', value: playerCount.toFixed(), details: 'Összesen' };
+    return {
+        index: GLOBAL_STATISTIC_PLAYER_COUNT_INDEX,
+        name: 'Játékosok száma',
+        value: playerCount.toFixed(),
+        details: 'Összesen',
+    };
 }
 
 function getGoalCountGlobalStatistic(goalCount: number): GlobalStatisticUpdate {
-    return { index: 3, value: goalCount.toFixed(), name: 'Gólok száma', details: 'Összesen' };
+    return {
+        index: GLOBAL_STATISTIC_GOAL_COUNT_INDEX,
+        value: goalCount.toFixed(),
+        name: 'Gólok száma',
+        details: 'Összesen',
+    };
 }
 
 function getAverageGoalCountGlobalStatistic(matchCount: number, goalCount: number): GlobalStatisticUpdate {
     const averageGoalCount = matchCount !== 0 ? goalCount / matchCount : 0;
     return {
-        index: 4,
+        index: GLOBAL_STATISTIC_AVERAGE_GOAL_COUNT_INDEX,
         value: formatNumberMaxDigits(averageGoalCount, 1),
         name: 'Átlag gólszám',
         details: 'Egy meccsen',
@@ -353,22 +477,42 @@ function getAverageGoalCountGlobalStatistic(matchCount: number, goalCount: numbe
 
 function getMaxGoalCountGlobalStatistic(matches: MatchGlobalStatisticsQueryResult[]): GlobalStatisticUpdate {
     const maxGoalCount = Math.max(...matches.map((m) => m.team[0].score + m.team[1].score));
-    return { index: 5, value: maxGoalCount.toFixed(), name: 'Legtöbb gól', details: 'Egy meccsen' };
+    return {
+        index: GLOBAL_STATISTIC_MAX_GOAL_COUNT_INDEX,
+        value: maxGoalCount.toFixed(),
+        name: 'Legtöbb gól',
+        details: 'Egy meccsen',
+    };
 }
 
 function getMinGoalCountGlobalStatistic(matches: MatchGlobalStatisticsQueryResult[]): GlobalStatisticUpdate {
     const minGoalCount = Math.min(...matches.map((m) => m.team[0].score + m.team[1].score));
-    return { index: 6, value: minGoalCount.toFixed(), name: 'Legkevesebb gól', details: 'Egy meccsen' };
+    return {
+        index: GLOBAL_STATISTIC_MIN_GOAL_COUNT_INDEX,
+        value: minGoalCount.toFixed(),
+        name: 'Legkevesebb gól',
+        details: 'Egy meccsen',
+    };
 }
 
 function getMaxGoalCountByTeamGlobalStatistic(matches: MatchGlobalStatisticsQueryResult[]): GlobalStatisticUpdate {
     const maxGoalCount = Math.max(...matches.flatMap((m) => m.team.map((t) => t.score)));
-    return { index: 7, value: maxGoalCount.toFixed(), name: 'Legtöbb gól', details: 'Egy csapat által' };
+    return {
+        index: GLOBAL_STATISTIC_MAX_GOAL_COUNT_BY_TEAM_INDEX,
+        value: maxGoalCount.toFixed(),
+        name: 'Legtöbb gól',
+        details: 'Egy csapat által',
+    };
 }
 
 function getMinGoalCountByTeamGlobalStatistic(matches: MatchGlobalStatisticsQueryResult[]): GlobalStatisticUpdate {
     const minGoalCount = Math.min(...matches.flatMap((m) => m.team.map((t) => t.score)));
-    return { index: 8, value: minGoalCount.toFixed(), name: 'Legkevesebb gól', details: 'Egy csapat által' };
+    return {
+        index: GLOBAL_STATISTIC_MIN_GOAL_COUNT_BY_TEAM_INDEX,
+        value: minGoalCount.toFixed(),
+        name: 'Legkevesebb gól',
+        details: 'Egy csapat által',
+    };
 }
 
 function getMaxMatchCountByPlayerGlobalStatistic(players: PlayerGlobalStatisticsQueryResult[]): GlobalStatisticUpdate {
@@ -378,7 +522,7 @@ function getMaxMatchCountByPlayerGlobalStatistic(players: PlayerGlobalStatistics
         .map((p) => p.name)
         .sort();
     return {
-        index: 9,
+        index: GLOBAL_STATISTIC_MAX_MATCH_COUNT_BY_PLAYER_INDEX,
         value: maxMatchCount.toFixed(),
         name: 'Legtöbb meccs',
         details: maxMatchCountPlayers[0],
@@ -397,7 +541,7 @@ function getBiggestVictoryGlobalStatistic(matches: MatchGlobalStatisticsQueryRes
     );
     if (biggestVictory.team[0].score === biggestVictory.team[1].score) {
         return {
-            index: 10,
+            index: GLOBAL_STATISTIC_BIGGEST_VICTORY_INDEX,
             value: '-',
             name: 'Legnagyobb győzelem',
             details: null,
@@ -414,7 +558,7 @@ function getBiggestVictoryGlobalStatistic(matches: MatchGlobalStatisticsQueryRes
         .map((m) => m.date)
         .sort();
     return {
-        index: 10,
+        index: GLOBAL_STATISTIC_BIGGEST_VICTORY_INDEX,
         value: `${biggestVictory.team[0].score} - ${biggestVictory.team[1].score}`,
         name: 'Legnagyobb győzelem',
         details: formatDate(biggestVictoryDates[0]),
@@ -433,14 +577,14 @@ function getMaxRatingGlobalStatistic(players: PlayerGlobalStatisticsQueryResult[
     const maxRating = players.reduce((prev, curr) => {
         const rating = ordinal({ mu: curr.mu, sigma: curr.sigma });
         return Math.max(prev, rating);
-    }, Number.NEGATIVE_INFINITY);
+    }, 0);
     const bestPlayers = players
         .filter((p) => ordinal({ mu: p.mu, sigma: p.sigma }) === maxRating)
         .map((p) => p.name)
         .sort();
     return {
-        index: 11,
-        value: formatNumberMaxDigits(maxRating, 2),
+        index: GLOBAL_STATISTIC_MAX_RATING_INDEX,
+        value: formatNumberMinMaxDigits(maxRating, 2),
         name: 'Legnagyobb pontszám',
         details: bestPlayers[0],
         extraDetails: bestPlayers.length > 1 ? `+${bestPlayers.length - 1}` : null,
@@ -453,9 +597,9 @@ function getAverageRatingGlobalStatistic(players: PlayerGlobalStatisticsQueryRes
         ? players.reduce((prev, curr) => prev + ordinal({ mu: curr.mu, sigma: curr.sigma }), 0) / players.length
         : 0;
     return {
-        index: 12,
+        index: GLOBAL_STATISTIC_AVERAGE_RATING_INDEX,
         name: 'Átlag pontszám',
-        value: formatNumberMaxDigits(averageRating, 2),
+        value: formatNumberMinMaxDigits(averageRating, 2),
         details: 'Összesen',
     };
 }
@@ -464,4 +608,8 @@ function revalidate(): void {
     revalidatePath('/');
     revalidatePath('/matches');
     revalidatePath('/players');
+}
+
+function revalidatePlayer(playerId: number): void {
+    revalidatePath(`/players/${playerId}`);
 }

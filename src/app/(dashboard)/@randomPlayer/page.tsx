@@ -1,11 +1,11 @@
 import { RandomPlayerCard } from '@/components/random-player-card';
-import { getPlayerStatistics } from '@/logic/statistics';
+import { getRandomPlayerStatistics } from '@/logic/statistics';
 import { connection } from 'next/server';
 import { JSX } from 'react';
 
 export default async function RandomPlayerStatisticsLazy(): Promise<JSX.Element> {
     await connection();
-    const playerStatistics = await getPlayerStatistics();
+    const playerStatistics = await getRandomPlayerStatistics();
     return playerStatistics ? (
         <RandomPlayerCard playerStatistics={playerStatistics} />
     ) : (

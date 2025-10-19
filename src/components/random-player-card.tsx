@@ -2,6 +2,8 @@ import { PlayerStatisticsDto } from '@/dtos/player-statistics-dto';
 import { UserCircleIcon } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 import { JSX } from 'react';
+import { DeletePlayerButton } from './buttons/delete-player-button';
+import { EditPlayerButton } from './buttons/edit-player-button';
 import { Card } from './card';
 import { StatisticCard } from './statistic-card';
 
@@ -9,22 +11,30 @@ export function RandomPlayerCard({ playerStatistics }: { playerStatistics: Playe
     return (
         <Card>
             <div className="flex h-full grow flex-col gap-1 sm:gap-2">
-                <h3 className="text-center text-lg">
-                    <Link href={`/players/${playerStatistics.id}`} className="text-sky-800 hover:text-sky-600">
-                        {playerStatistics.name}
-                    </Link>
-                </h3>
+                <div className="flex justify-between">
+                    <h3 className="order-2 text-center text-lg">
+                        <Link href={`/players/${playerStatistics.id}`} className="text-sky-800 hover:text-sky-600">
+                            {playerStatistics.name}
+                        </Link>
+                    </h3>
+                    <div className="order-1">
+                        <EditPlayerButton />
+                    </div>
+                    <div className="order-3">
+                        <DeletePlayerButton matchCount={playerStatistics.matchCount} />
+                    </div>
+                </div>
                 <div className="flex grow gap-1 sm:gap-2">
                     <div className="hidden aspect-[9/16] h-full items-center justify-center rounded-lg border-1 lg:flex">
                         <UserCircleIcon size={64} weight="thin" alt="" />
                     </div>
                     <div className="flex w-full flex-col gap-1 sm:gap-2">
                         <div className="grid grow grid-cols-2 gap-1 sm:gap-2">
-                            {playerStatistics.statistics.map((s) => (
+                            {playerStatistics.statistics.map((s, i) => (
                                 <StatisticCard
                                     statistic={s}
                                     size="small"
-                                    className="row-span-3 grid grid-rows-subgrid gap-1"
+                                    className={`row-span-3 grid grid-rows-subgrid gap-1 ${i === playerStatistics.statistics.length - 1 ? 'col-span-2' : ''}`}
                                     key={s.id}
                                 />
                             ))}

@@ -76,6 +76,7 @@ model PlayerStatistic {
   player              Player  @relation(fields: [playerId], references: [id])
   name                String
   value               String
+  valueAriaLabel      String?
   details             String?
   extraDetails        String?
   extraDetailsTooltip String?

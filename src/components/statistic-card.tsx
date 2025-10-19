@@ -14,13 +14,15 @@ export function StatisticCard({
     return (
         <Card size={size} className={className}>
             <div className="px-1 sm:p-0">{statistic.name}</div>
-            <div className="self-center text-center text-3xl">{statistic.value}</div>
+            <div className="self-center text-center text-3xl" aria-label={statistic.valueAriaLabel ?? undefined}>
+                <div aria-hidden={!!statistic.valueAriaLabel}>{statistic.value}</div>
+            </div>
             <div className="flex items-center justify-between px-1 text-sm text-gray-600 sm:p-0">
                 <div>{statistic.details}</div>
                 {statistic.extraDetails && (
                     <div
                         className="rounded-md border-1 px-1 select-none"
-                        title={statistic.extraDetailsTooltip ? statistic.extraDetailsTooltip : undefined}
+                        title={statistic.extraDetailsTooltip ?? undefined}
                     >
                         {statistic.extraDetails}
                     </div>
