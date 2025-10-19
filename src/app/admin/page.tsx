@@ -1,7 +1,7 @@
 'use client';
 
+import { UpdateAllMatchesButton, UpdateLastMatchButton } from '@/components/buttons/update-button';
 import { LoadingIndicator } from '@/components/loading-indicator';
-import { UpdateAllMatchesButton, UpdateLastMatchButton } from '@/components/update-button';
 import { isAdmin } from '@/utility';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';

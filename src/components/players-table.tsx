@@ -2,17 +2,12 @@
 
 import { PlayerListDto } from '@/dtos/player-list-dto';
 import { formatNumberMinMaxDigits, isAdmin } from '@/utility';
-import {
-    CaretLeftIcon,
-    CaretLineLeftIcon,
-    CaretLineRightIcon,
-    CaretRightIcon,
-    PencilIcon,
-    TrashIcon,
-} from '@phosphor-icons/react';
+import { CaretLeftIcon, CaretLineLeftIcon, CaretLineRightIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ChangeEvent, JSX, useEffect, useState } from 'react';
+import { DeletePlayerButton } from './buttons/delete-player-button';
+import { EditPlayerButton } from './buttons/edit-player-button';
 import { Card } from './card';
 import { PlayersTableSortIcon } from './players-table-sort-icon';
 import { PlayersTableSkeleton } from './skeletons/players-table-skeleton';
@@ -139,46 +134,28 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     {pagedPlayers.map((p) => (
                         <tr key={p.id}>
                             <td className="rounded-s-md border-1 border-e-0">
-                                <div className="m-auto p-1">
+                                <div className="m-auto p-1 sm:p-2">
                                     <Link className="text-sky-800 hover:text-sky-600" href={`/players/${p.id}`}>
                                         {p.name}
                                     </Link>
                                 </div>
                             </td>
                             <td className="hidden border-y-1 sm:table-cell">
-                                <div className="m-auto w-10 p-1 text-right">{p.matchCount}</div>
+                                <div className="m-auto w-10 p-1 text-right sm:p-2">{p.matchCount}</div>
                             </td>
                             <td className="hidden border-y-1 sm:table-cell">
-                                <div className="m-auto w-12 p-1 text-right">{p.matchRatio.toFixed()}%</div>
+                                <div className="m-auto w-14 p-1 text-right sm:p-2">{p.matchRatio.toFixed()}%</div>
                             </td>
                             <td className={` ${admin ? 'border-y-1' : 'rounded-e-md border-1 border-s-0'}`}>
-                                <div className="m-auto w-11 p-1 text-right">
+                                <div className="m-auto w-14 p-1 text-right sm:p-2">
                                     {formatNumberMinMaxDigits(p.rating, 2)}
                                 </div>
                             </td>
                             {admin && (
                                 <td className="rounded-e-md border-1 border-s-0">
-                                    <div className="flex justify-center gap-2">
-                                        <button
-                                            onClick={() => alert('Játékos szerkesztése')}
-                                            className="cursor-pointer text-sky-800 hover:text-sky-600"
-                                            aria-label="Szerkesztés"
-                                        >
-                                            <PencilIcon />
-                                        </button>
-                                        <button
-                                            onClick={() => alert('Játékos örlése')}
-                                            disabled={p.matchCount > 0}
-                                            className="text-red-800 not-disabled:cursor-pointer hover:text-red-600 disabled:text-gray-500"
-                                            title={
-                                                p.matchCount > 0
-                                                    ? 'Csak a meccs nélküli játékosok törölhetők'
-                                                    : undefined
-                                            }
-                                            aria-label="Törlés"
-                                        >
-                                            <TrashIcon />
-                                        </button>
+                                    <div className="flex justify-center gap-2 p-1 sm:p-2">
+                                        <EditPlayerButton />
+                                        <DeletePlayerButton matchCount={p.matchCount} />
                                     </div>
                                 </td>
                             )}
@@ -192,19 +169,19 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     <input onChange={changeHideNoneRegulars} type="checkbox" checked={hideNonRegulars} />
                     <div>Csak rendszeres játékosok</div>
                 </label>
-                <nav className="flex justify-center gap-1 sm:gap-2" aria-label="Lapozás">
+                <nav className="flex items-center justify-center gap-1 sm:gap-2" aria-label="Lapozás">
                     <button
                         onClick={() => changePage(0)}
+                        className="interactivity interactivity-normal"
                         disabled={page === 0}
-                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:text-white not-disabled:hover:bg-sky-600 disabled:text-gray-500"
                         aria-label="Első oldal"
                     >
                         <CaretLineLeftIcon />
                     </button>
                     <button
                         onClick={() => changePage(page - 1)}
+                        className="interactivity interactivity-normal"
                         disabled={page === 0}
-                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:text-white not-disabled:hover:bg-sky-600 disabled:text-gray-500"
                         aria-label="Előző oldal"
                     >
                         <CaretLeftIcon />
@@ -217,16 +194,16 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     </div>
                     <button
                         onClick={() => changePage(page + 1)}
+                        className="interactivity interactivity-normal"
                         disabled={page === pageCount - 1}
-                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:text-white not-disabled:hover:bg-sky-600 disabled:text-gray-500"
                         aria-label="Következő oldal"
                     >
                         <CaretRightIcon />
                     </button>
                     <button
                         onClick={() => changePage(pageCount - 1)}
+                        className="interactivity interactivity-normal"
                         disabled={page === pageCount - 1}
-                        className="flex w-10 items-center justify-center rounded-md border-1 p-1 text-sky-800 not-disabled:cursor-pointer hover:text-white not-disabled:hover:bg-sky-600 disabled:text-gray-500"
                         aria-label="Utolsó oldal"
                     >
                         <CaretLineRightIcon />
@@ -280,7 +257,7 @@ const TABLE_COLUMNS = [
 ] as const;
 
 function getInitialPageSize(): number {
-    const defaultValue = 16;
+    const defaultValue = 12;
     const stringValue = localStorage.getItem(PAGE_SIZE_KEY);
     if (!stringValue) {
         return defaultValue;

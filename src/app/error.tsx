@@ -17,7 +17,7 @@ export default function ErrorPage({ reset }: { error: Error & { digest?: string 
                         zalan.racz.dev@gmail.com
                     </a>
                 </p>
-                <button className="rounded-2xl border-1 p-2 hover:bg-black hover:text-white" onClick={() => reset()}>
+                <button onClick={reset} className="interactivity interactivity-normal">
                     Oldal újratöltése
                 </button>
             </div>

@@ -28,18 +28,18 @@ export function NavbarUserSection({ origin }: { origin: string }): JSX.Element {
             {session.status === 'authenticated' && (
                 <>
                     <div
-                        className="h-4 w-4 overflow-hidden rounded-full border-1"
+                        className="flex h-6.5 w-6.5 items-center justify-center overflow-hidden rounded-md border-1"
                         aria-label={loggedIn}
                         title={loggedIn}
                     >
                         {session.data.user?.image && (
-                            <Image src={session.data.user.image} width={14} height={14} alt="" />
+                            <Image src={session.data.user.image} width={24} height={24} alt="" />
                         )}
-                        {!session.data.user?.image && <UserIcon size={14} />}
+                        {!session.data.user?.image && <UserIcon size={16} />}
                     </div>
                     <button
                         onClick={() => signOut()}
-                        className="cursor-pointer hover:text-sky-600"
+                        className="interactivity interactivity-normal"
                         aria-label="Kijelentkezés"
                     >
                         <SignOutIcon />
@@ -49,13 +49,21 @@ export function NavbarUserSection({ origin }: { origin: string }): JSX.Element {
             {session.status === 'unauthenticated' && (
                 <Link
                     href={`/sign-in?${queryParams}`}
-                    className="cursor-pointer hover:text-sky-600"
+                    className="interactivity interactivity-normal"
                     aria-label="Bejelentkezés"
                 >
                     <SignInIcon />
                 </Link>
             )}
-            {session.status === 'loading' && <LoadingIndicator size={16} />}
+            {session.status === 'loading' && (
+                <div
+                    className="flex h-6.5 w-6.5 items-center justify-center overflow-hidden rounded-md border-1"
+                    aria-label={loggedIn}
+                    title={loggedIn}
+                >
+                    <LoadingIndicator size={16} />
+                </div>
+            )}
         </>
     );
 }

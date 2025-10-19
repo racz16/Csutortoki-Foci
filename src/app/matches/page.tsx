@@ -1,5 +1,5 @@
+import { NewMatchButton } from '@/components/buttons/new-match-button';
 import { Matches } from '@/components/matches';
-import { NewMatchButton } from '@/components/new-match-button';
 import { MatchesSkeleton } from '@/components/skeletons/matches-skeleton';
 import { getMatches } from '@/logic/matches';
 import { JSX, Suspense } from 'react';

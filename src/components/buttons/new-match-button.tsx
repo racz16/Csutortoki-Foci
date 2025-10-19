@@ -1,6 +1,7 @@
 'use client';
 
 import { isAdmin } from '@/utility';
+import { PlusIcon } from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
 import { JSX } from 'react';
 
@@ -11,10 +12,11 @@ export function NewMatchButton(): JSX.Element {
     }
     return (
         <button
-            onClick={() => alert('Új meccs')}
-            className="cursor-pointer rounded-md border-1 p-1 text-sky-800 hover:bg-sky-600 hover:text-white"
+            onClick={() => alert('Meccs létrehozása')}
+            className="interactivity interactivity-normal"
+            aria-label="Létrehozás"
         >
-            Új meccs
+            <PlusIcon weight="bold" />
         </button>
     );
 }

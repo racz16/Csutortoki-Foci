@@ -13,10 +13,10 @@ export function EditMatchButton(): JSX.Element {
     return (
         <button
             onClick={() => alert('Meccs szerkesztése')}
-            className="cursor-pointer text-sky-800 hover:text-sky-600"
+            className="interactivity interactivity-normal"
             aria-label="Szerkesztés"
         >
-            <PencilIcon size={16} />
+            <PencilIcon />
         </button>
     );
 }

@@ -6,8 +6,11 @@ import { JSX } from 'react';
 export function UpdateAllMatchesButton(): JSX.Element {
     return (
         <button
-            onClick={updateAll}
-            className="cursor-pointer rounded-md border-1 p-1 text-sky-800 hover:bg-sky-600 hover:text-white"
+            onClick={async () => {
+                await updateAll();
+                alert('Összes meccs frissítve');
+            }}
+            className="interactivity interactivity-normal"
         >
             Összes meccs frissítése
         </button>
@@ -17,8 +20,11 @@ export function UpdateAllMatchesButton(): JSX.Element {
 export function UpdateLastMatchButton(): JSX.Element {
     return (
         <button
-            onClick={updateLast}
-            className="cursor-pointer rounded-md border-1 p-1 text-sky-800 hover:bg-sky-600 hover:text-white"
+            onClick={async () => {
+                await updateLast();
+                alert('Utolsó meccs frissítve');
+            }}
+            className="interactivity interactivity-normal"
         >
             Utolsó meccs frissítése
         </button>

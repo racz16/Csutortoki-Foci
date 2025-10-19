@@ -15,15 +15,15 @@ export function NavLink({
     hamburger?: boolean;
 }): JSX.Element {
     const pathname = usePathname();
-    let classNames = '';
+    let className = '';
     if (pathname === href) {
-        classNames = 'font-bold text-black';
+        className = 'font-bold';
     }
     const { toggle } = useNavbarContext();
     return (
         <Link
             href={href}
-            className={`relative text-sky-800 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-sky-600 after:transition-all after:duration-300 hover:text-sky-600 hover:after:w-full ${classNames}`}
+            className={`interactivity interactivity-normal text-center sm:w-25 ${className}`}
             onClick={hamburger ? toggle : undefined}
         >
             {children}
