@@ -1,7 +1,7 @@
-import { MoonIcon, SoccerBallIcon } from '@phosphor-icons/react/dist/ssr';
+import { SoccerBallIcon } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 import { JSX } from 'react';
-import { HamburgerButton } from './hamburger-button';
+import { HamburgerButton } from './buttons/hamburger-button';
 import { NavLink } from './nav-link';
 import { NavbarMenu } from './navbar-menu';
 import { NavbarProvider } from './navbar-provider';
@@ -15,7 +15,7 @@ export function Navbar(): JSX.Element {
         { id: 3, name: 'Játékosok', href: '/players' },
     ];
     return (
-        <header className="sticky top-0 z-1 flex flex-col justify-center border-b-1 bg-white p-2 sm:flex-row dark:bg-black">
+        <header className="sticky top-0 z-1 flex flex-col justify-center border-b-1 bg-white p-2 sm:flex-row">
             <Link
                 className="absolute bottom-100 self-center rounded-lg border-1 bg-white p-2 focus:-bottom-12 sm:focus:-bottom-14"
                 href="#main-content"
@@ -23,7 +23,7 @@ export function Navbar(): JSX.Element {
                 Ugrás a tartalomhoz
             </Link>
             <NavbarProvider>
-                <div className="flex w-full items-baseline justify-between lg:w-5xl">
+                <div className="flex w-full items-center justify-between lg:w-5xl">
                     <h1 className="justify-self-start text-2xl">
                         <Link href="/" className="flex items-baseline gap-1">
                             <SoccerBallIcon className="self-center" alt="" />
@@ -37,11 +37,11 @@ export function Navbar(): JSX.Element {
                             </NavLink>
                         ))}
                     </nav>
-                    <div className="flex items-baseline gap-2 sm:gap-4">
+                    <div className="flex items-center gap-2">
                         <NavbarUserSection origin={origin} />
-                        <button aria-label="Váltás sötét módra">
+                        {/* <button disabled aria-label="Váltás sötét módra">
                             <MoonIcon />
-                        </button>
+                        </button> */}
                         <HamburgerButton />
                     </div>
                 </div>
