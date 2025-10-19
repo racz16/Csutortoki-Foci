@@ -13,10 +13,14 @@ export function PlayersTableSortIcon({
 }): JSX.Element {
     return (
         <div className="text-sky-800 group-hover:text-sky-600" aria-hidden="true">
-            {orderBy === name && orderByDirection === 'asc' && <SortAscendingIcon />}
-            {orderBy === name && orderByDirection === 'desc' && <SortDescendingIcon />}
-            {orderBy !== name && name === 'name' && <SortAscendingIcon className="hidden group-hover:block" />}
-            {orderBy !== name && name !== 'name' && <SortDescendingIcon className="hidden group-hover:block" />}
+            {orderBy === name && orderByDirection === 'asc' && <SortAscendingIcon weight="bold" />}
+            {orderBy === name && orderByDirection === 'desc' && <SortDescendingIcon weight="bold" />}
+            {orderBy !== name && name === 'name' && (
+                <SortAscendingIcon weight="bold" className="hidden group-hover:block" />
+            )}
+            {orderBy !== name && name !== 'name' && (
+                <SortDescendingIcon weight="bold" className="hidden group-hover:block" />
+            )}
             {orderBy !== name && <div className="h-4 w-4 group-hover:hidden"></div>}
         </div>
     );
