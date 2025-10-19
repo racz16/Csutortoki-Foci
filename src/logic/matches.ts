@@ -36,11 +36,11 @@ interface LocationQueryResult {
     name: string;
 }
 
-export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
+export async function getMatches(nextDate?: Date, playerId?: number): Promise<MatchesDto> {
     await preventPrerenderingInCiPipeline();
 
     const pageSize = 10;
-    const where: Prisma.MatchWhereInput | undefined = nextDate ? { date: { lte: nextDate } } : undefined;
+    const where = getMatchesCondition(nextDate, playerId);
 
     const matches = await prismaClient.match.findMany({
         where,
@@ -65,6 +65,17 @@ export async function getMatches(nextDate?: Date): Promise<MatchesDto> {
 
     const newNextDate = matches.length === pageSize + 1 ? (matches.pop()?.date?.toString() ?? null) : null;
     return { matches: matches.map((m) => mapMatchToDto(m)), nextDate: newNextDate };
+}
+
+function getMatchesCondition(nextDate?: Date, playerId?: number): Prisma.MatchWhereInput | undefined {
+    const and: Prisma.MatchWhereInput[] = [];
+    if (nextDate) {
+        and.push({ date: { lte: nextDate } });
+    }
+    if (playerId) {
+        and.push({ team: { some: { teamPlayer: { some: { playerId } } } } });
+    }
+    return { AND: and };
 }
 
 export async function getLastMatch(): Promise<MatchDto | null> {

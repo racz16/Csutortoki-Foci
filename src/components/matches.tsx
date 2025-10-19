@@ -5,7 +5,7 @@ import { JSX, useEffect, useRef, useState } from 'react';
 import { LoadingIndicator } from './loading-indicator';
 import { MatchCard } from './match-card';
 
-export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX.Element {
+export function Matches({ initialMatches, playerId }: { initialMatches: MatchesDto; playerId?: number }): JSX.Element {
     const [matches, setMatches] = useState(initialMatches);
     const [loading, setLoading] = useState(false);
     const infiniteScrollTarget = useRef<HTMLDivElement | null>(null);
@@ -20,7 +20,10 @@ export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX
                     setLoading(true);
                     const params = new URLSearchParams();
                     params.append('nextDate', matches.nextDate);
-                    const response = await fetch(`api/matches?${params}`);
+                    if (playerId) {
+                        params.append('playerId', playerId.toFixed());
+                    }
+                    const response = await fetch(`/api/matches?${params}`);
                     const newMatches: MatchesDto = await response.json();
                     setMatches((m) => ({
                         matches: [...m.matches, ...newMatches.matches],
@@ -36,7 +39,7 @@ export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX
         return () => {
             observer.disconnect();
         };
-    }, [matches, loading]);
+    }, [matches, loading, playerId]);
 
     return (
         <div role="feed">
@@ -45,7 +48,7 @@ export function Matches({ initialMatches }: { initialMatches: MatchesDto }): JSX
                 <>
                     <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
                         {matches.matches.map((m) => (
-                            <MatchCard match={m} key={m.id} />
+                            <MatchCard match={m} playerId={playerId} key={m.id} />
                         ))}
                     </div>
                     <div ref={infiniteScrollTarget} className="flex justify-center p-2">

@@ -4,13 +4,13 @@ import { ArrowDownIcon, ArrowUpIcon, CircleIcon } from '@phosphor-icons/react/di
 import { Chivo_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { Fragment, JSX } from 'react';
+import { DeleteMatchButton } from './buttons/delete-match-button';
+import { EditMatchButton } from './buttons/edit-match-button';
 import { Card } from './card';
-import { DeleteMatchButton } from './delete-match-button';
-import { EditMatchButton } from './edit-match-button';
 
 export const chivoMonoFont = Chivo_Mono({ weight: '400', subsets: ['latin'] });
 
-export function MatchCard({ match }: { match: MatchDto }): JSX.Element {
+export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: number }): JSX.Element {
     const date = new Date(match.date);
     return (
         <Card className="flex flex-col justify-between gap-1 sm:gap-2">
@@ -54,7 +54,7 @@ export function MatchCard({ match }: { match: MatchDto }): JSX.Element {
                                 >
                                     <Link
                                         href={`/players/${p.playerId}`}
-                                        className={`text-sky-800 hover:text-sky-600 ${i === 0 ? 'order-2 text-right' : 'order-1'}`}
+                                        className={`text-sky-800 hover:text-sky-600 ${i === 0 ? 'order-2 text-right' : 'order-1'} ${p.playerId === playerId ? 'font-bold' : ''}`}
                                     >
                                         {p.name}
                                     </Link>
