@@ -30,7 +30,7 @@ export default async function MainPage({ randomPlayer }: { randomPlayer: ReactNo
                 <div className="flex items-baseline justify-between">
                     <h2 className="mt-1 text-xl sm:mt-2">Statisztikák</h2>
                     <legend className="text-center text-xs text-gray-500">
-                        A statisztikák 2025. júliusa óta értendők
+                        A statisztikák 2025 júliusa óta értendők
                     </legend>
                 </div>
                 <Suspense fallback={<GlobalStatisticsSkeleton />}>
