@@ -11,31 +11,31 @@ export function MatchCardSkeleton(): JSX.Element {
         { id: 6, className: 'w-22 md:w-30' },
     ];
     return (
-        <Card className="flex animate-pulse flex-col justify-between gap-1 border-gray-200 sm:gap-2">
+        <Card className="flex flex-col justify-between gap-1 sm:gap-2">
             <div>
                 <div className="flex h-6 items-center justify-center">
-                    <div className="h-4 w-66 rounded bg-gray-200"></div>
+                    <div className="h-4 w-66 animate-pulse rounded bg-gray-500/50"></div>
                 </div>
                 <div className="flex h-10 items-center justify-center">
-                    <div className="h-8 w-32 rounded bg-gray-200"></div>
+                    <div className="h-8 w-32 animate-pulse rounded bg-gray-500/50"></div>
                 </div>
                 <div className="flex flex-col justify-center gap-1">
                     {matchPlaceholders.map((item) => (
                         <div key={item.id} className="grid grid-cols-2 gap-2">
-                            <div className="flex items-center justify-between rounded-md border-1 border-gray-200 p-1">
-                                <div className="h-6 w-10 rounded bg-gray-200"></div>
-                                <div className={`h-4 rounded bg-gray-200 ${item.className}`}></div>
+                            <div className="glass-nested flex items-center justify-between rounded-md p-1">
+                                <div className="h-6 w-10 animate-pulse rounded bg-gray-500/50"></div>
+                                <div className={`h-4 animate-pulse rounded bg-gray-500/50 ${item.className}`}></div>
                             </div>
-                            <div className="flex items-center justify-between rounded-md border-1 border-gray-200 p-1">
-                                <div className={`h-4 rounded bg-gray-200 ${item.className}`}></div>
-                                <div className="h-6 w-10 rounded bg-gray-200"></div>
+                            <div className="glass-nested flex items-center justify-between rounded-md p-1">
+                                <div className={`h-4 animate-pulse rounded bg-gray-500/50 ${item.className}`}></div>
+                                <div className="h-6 w-10 animate-pulse rounded bg-gray-500/50"></div>
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
             <div className="flex h-7 items-center justify-center">
-                <div className="h-5 w-24 rounded bg-gray-200"></div>
+                <div className="h-5 w-24 animate-pulse rounded bg-gray-500/50"></div>
             </div>
         </Card>
     );

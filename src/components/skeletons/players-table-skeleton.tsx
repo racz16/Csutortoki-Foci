@@ -3,34 +3,34 @@ import { Card } from '../card';
 
 export function PlayersTableSkeleton(): JSX.Element {
     return (
-        <Card className="animate-pulse border-gray-200 pt-0 sm:pt-0">
+        <Card className="pt-0 sm:pt-0">
             <table className="w-full border-separate border-spacing-y-1 sm:border-spacing-y-2">
                 <thead>
                     <tr>
                         <th className="px-1 sm:px-2">
                             <div className="flex h-6 items-center">
-                                <div className="h-4 w-10 rounded bg-gray-200 ps-4"></div>
+                                <div className="h-4 w-10 animate-pulse rounded bg-gray-500/50 ps-4"></div>
                                 <div className="h-4 w-4"></div>
                             </div>
                         </th>
                         <th className="hidden px-1 sm:table-cell sm:px-2">
                             <div className="flex h-6 items-center justify-center">
                                 <div className="h-4 w-4"></div>
-                                <div className="h-4 w-30 rounded bg-gray-200"></div>
+                                <div className="h-4 w-30 animate-pulse rounded bg-gray-500/50"></div>
                                 <div className="h-4 w-4"></div>
                             </div>
                         </th>
                         <th className="hidden px-1 sm:table-cell sm:px-2">
                             <div className="flex h-6 items-center justify-center">
                                 <div className="h-4 w-4"></div>
-                                <div className="h-4 w-20 rounded bg-gray-200"></div>
+                                <div className="h-4 w-20 animate-pulse rounded bg-gray-500/50"></div>
                                 <div className="h-4 w-4"></div>
                             </div>
                         </th>
                         <th className="px-1 sm:px-2">
                             <div className="flex h-6 items-center justify-center">
                                 <div className="h-4 w-4"></div>
-                                <div className="h-4 w-20 rounded bg-gray-200"></div>
+                                <div className="h-4 w-20 animate-pulse rounded bg-gray-500/50"></div>
                                 <div className="h-4 w-4"></div>
                             </div>
                         </th>
@@ -38,25 +38,33 @@ export function PlayersTableSkeleton(): JSX.Element {
                 </thead>
                 <tbody>
                     {playerPlaceholders.map((p) => (
-                        <tr key={p.id}>
-                            <td className="rounded-s-md border-1 border-e-0 border-gray-200">
+                        <tr className="glass-nested" key={p.id}>
+                            <td className="rounded-s-md border-1 border-e-0 border-white/25">
                                 <div className="flex h-8 items-center p-1 sm:h-10 sm:p-2">
-                                    <div className={`h-4 rounded bg-gray-200 ${p.nameClassName}`}></div>
+                                    <div
+                                        className={`h-4 animate-pulse rounded bg-gray-500/50 ${p.nameClassName}`}
+                                    ></div>
                                 </div>
                             </td>
-                            <td className="hidden border-y-1 border-gray-200 sm:table-cell">
+                            <td className="hidden border-y-1 border-white/25 sm:table-cell">
                                 <div className="flex h-8 items-center justify-center p-1 sm:h-10 sm:p-2">
-                                    <div className={`h-4 rounded bg-gray-200 ${p.matchCountClassName}`}></div>
+                                    <div
+                                        className={`h-4 animate-pulse rounded bg-gray-500/50 ${p.matchCountClassName}`}
+                                    ></div>
                                 </div>
                             </td>
-                            <td className="hidden border-y-1 border-gray-200 sm:table-cell">
+                            <td className="hidden border-y-1 border-white/25 sm:table-cell">
                                 <div className="flex h-8 items-center justify-center p-1 sm:h-10 sm:p-2">
-                                    <div className={`h-4 rounded bg-gray-200 ${p.matchRatioClassName}`}></div>
+                                    <div
+                                        className={`h-4 animate-pulse rounded bg-gray-500/50 ${p.matchRatioClassName}`}
+                                    ></div>
                                 </div>
                             </td>
-                            <td className="rounded-e-md border-1 border-s-0 border-gray-200">
+                            <td className="rounded-e-md border-1 border-s-0 border-white/25">
                                 <div className="flex h-8 items-center justify-center p-1 sm:h-10 sm:p-2">
-                                    <div className={`h-4 rounded bg-gray-200 ${p.ordinalClassName}`}></div>
+                                    <div
+                                        className={`h-4 animate-pulse rounded bg-gray-500/50 ${p.ordinalClassName}`}
+                                    ></div>
                                 </div>
                             </td>
                         </tr>
@@ -64,9 +72,9 @@ export function PlayersTableSkeleton(): JSX.Element {
                 </tbody>
             </table>
             <div className="flex flex-col items-center justify-between gap-1 sm:flex-row sm:gap-2">
-                <div className="h-5 w-50 rounded bg-gray-200"></div>
-                <div className="h-8.5 w-46 rounded bg-gray-200 sm:h-7.25"></div>
-                <div className="h-6 w-32 rounded bg-gray-200"></div>
+                <div className="h-6 w-50 animate-pulse rounded bg-gray-500/50"></div>
+                <div className="h-6.5 w-46 animate-pulse rounded bg-gray-500/50"></div>
+                <div className="h-6 w-32 animate-pulse rounded bg-gray-500/50"></div>
             </div>
         </Card>
     );
