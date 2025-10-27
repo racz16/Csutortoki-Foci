@@ -25,9 +25,11 @@ export function Navbar(): JSX.Element {
             <NavbarProvider>
                 <div className="flex w-full items-center justify-between lg:w-5xl">
                     <h1 className="justify-self-start text-2xl">
-                        <Link href="/" className="flex items-baseline gap-1">
-                            <SoccerBallIcon className="self-center" alt="" />
-                            Csütörtöki Foci
+                        <Link href="/" className="flex items-center gap-1 hover:text-gray-700">
+                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white">
+                                <SoccerBallIcon className="shrink-0" alt="" />
+                            </div>
+                            <span>Csütörtöki Foci</span>
                         </Link>
                     </h1>
                     <nav className="hidden gap-4 sm:flex">
