@@ -8,7 +8,7 @@ export default async function PlayersPage(): Promise<JSX.Element> {
     return (
         <div className="flex flex-col gap-2 sm:gap-4">
             <div className="flex h-8.5 items-center justify-between">
-                <h2 className="text-xl">Játékosok</h2>
+                <h2 className="text-bg text-xl">Játékosok</h2>
                 <NewPlayerButton />
             </div>
             <Suspense fallback={<PlayersTableSkeleton />}>

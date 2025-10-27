@@ -13,7 +13,7 @@ export default async function MainPage({ randomPlayer }: { randomPlayer: ReactNo
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
                 <section className="flex flex-col gap-2 sm:grid-cols-2 sm:gap-4">
                     <div className="flex h-8.5 shrink-0 items-center">
-                        <h2 className="text-xl">Utolsó meccs</h2>
+                        <h2 className="text-bg text-xl">Utolsó meccs</h2>
                     </div>
                     <Suspense fallback={<MatchCardSkeleton />}>
                         <LastMatchLazy />
@@ -21,15 +21,15 @@ export default async function MainPage({ randomPlayer }: { randomPlayer: ReactNo
                 </section>
                 <section className="flex flex-col gap-2 sm:grid-cols-2 sm:gap-4">
                     <div className="flex h-8.5 shrink-0 items-center">
-                        <h2 className="text-xl">Véletlen játékos</h2>
+                        <h2 className="text-bg text-xl">Véletlen játékos</h2>
                     </div>
                     <Suspense fallback={<PlayerStatisticsCardSkeleton />}>{randomPlayer}</Suspense>
                 </section>
             </div>
             <section className="flex flex-col gap-2 sm:gap-4">
                 <div className="flex items-baseline justify-between">
-                    <h2 className="mt-1 text-xl sm:mt-2">Statisztikák</h2>
-                    <legend className="text-center text-xs text-gray-500">
+                    <h2 className="text-bg mt-1 text-xl sm:mt-2">Statisztikák</h2>
+                    <legend className="text-bg text-center text-xs text-gray-800">
                         A statisztikák 2025 júliusa óta értendők
                     </legend>
                 </div>

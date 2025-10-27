@@ -27,7 +27,7 @@ export default async function PlayerPage({ params }: { params: Promise<{ id: str
                 <PlayerStatisticsLazy playerId={playerId} />
             </Suspense>
             <section className="flex flex-col gap-2 sm:gap-4">
-                <h3 className="mt-1 text-lg sm:mt-2">Meccsek</h3>
+                <h3 className="text-bg mt-1 text-lg sm:mt-2">Meccsek</h3>
                 <Suspense fallback={<MatchesSkeleton />}>
                     <MatchesLazy playerId={playerId} />
                 </Suspense>
@@ -41,7 +41,7 @@ async function PlayerStatisticsLazy({ playerId }: { playerId: number }): Promise
     return (
         <>
             <div className="flex h-8.5 items-center justify-between">
-                <h2 className="text-xl">{playerStatistics.name}</h2>
+                <h2 className="text-bg text-xl">{playerStatistics.name}</h2>
                 {!playerStatistics.regular && <div className="text-xs text-gray-500">Nem rendszeres játékos</div>}
                 <div className="flex gap-2">
                     <EditPlayerButton />

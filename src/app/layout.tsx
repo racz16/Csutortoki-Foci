@@ -24,7 +24,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
     return (
         <html lang="hu">
-            <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-[repeating-linear-gradient(45deg,#a5d56f,#cdee6b_150px)] antialiased`}
+            >
                 <SessionProvider>
                     <Navbar />
                     <main id="main-content" className="flex grow-1 justify-center focus:outline-0" tabIndex={-1}>

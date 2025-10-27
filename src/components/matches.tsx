@@ -2,6 +2,7 @@
 
 import { MatchesDto } from '@/dtos/matches-dto';
 import { JSX, useEffect, useRef, useState } from 'react';
+import { Card } from './card';
 import { LoadingIndicator } from './loading-indicator';
 import { MatchCard } from './match-card';
 
@@ -52,8 +53,12 @@ export function Matches({ initialMatches, playerId }: { initialMatches: MatchesD
                         ))}
                     </div>
                     <div ref={infiniteScrollTarget} className="flex justify-center p-2">
-                        {loading && <LoadingIndicator size={32} />}
-                        {!matches.nextDate && <div className="text-sm text-gray-500">Elérted a legkorábbi meccset</div>}
+                        {loading && (
+                            <Card>
+                                <LoadingIndicator size={32} />
+                            </Card>
+                        )}
+                        {!matches.nextDate && <div className="text-bg text-sm">Elérted a legkorábbi meccset</div>}
                     </div>
                 </>
             )}
