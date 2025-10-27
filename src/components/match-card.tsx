@@ -13,7 +13,7 @@ export const chivoMonoFont = Chivo_Mono({ weight: '400', subsets: ['latin'] });
 export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: number }): JSX.Element {
     const date = new Date(match.date);
     return (
-        <Card className="flex flex-col justify-between gap-1 sm:gap-2">
+        <Card className="flex h-full flex-col justify-between gap-1 sm:gap-2">
             <div>
                 <div className="flex justify-center gap-x-4">
                     <div className="text-center">{formatDateTime(date)}</div>
@@ -49,12 +49,12 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                             </div>
                             {t.teamPlayer.map((p) => (
                                 <div
-                                    className={`flex items-center justify-between rounded-md border-1 p-1 ${i === 0 ? 'col-1' : 'col-2'}`}
+                                    className={`flex items-center justify-between rounded-md p-1 ${i === 0 ? 'col-1' : 'col-2'} ${p.playerId === playerId ? 'glass-selected' : 'glass-nested'}`}
                                     key={p.playerId}
                                 >
                                     <Link
                                         href={`/players/${p.playerId}`}
-                                        className={`text-sky-800 hover:text-sky-600 ${i === 0 ? 'order-2 text-right' : 'order-1'} ${p.playerId === playerId ? 'font-bold' : ''}`}
+                                        className={`link ${i === 0 ? 'order-2 text-right' : 'order-1'} ${p.playerId === playerId ? 'font-bold' : ''}`}
                                     >
                                         {p.name}
                                     </Link>
@@ -62,7 +62,7 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                                         className={`flex items-center gap-1 ${i === 0 ? 'order-1 flex-wrap' : 'order-2 flex-wrap-reverse justify-end'}`}
                                     >
                                         <div
-                                            className={`w-10 rounded-sm border-1 text-center text-sm ${i === 0 ? 'order-1' : 'order-2'}`}
+                                            className={`glass-nested w-10 rounded-sm text-center text-sm ${i === 0 ? 'order-1' : 'order-2'}`}
                                             aria-label={`Pontszám: ${formatNumberMinMaxDigits(p.beforeRating, 1)}`}
                                         >
                                             <div aria-hidden="true">{formatNumberMinMaxDigits(p.beforeRating, 1)}</div>
@@ -72,9 +72,15 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                                             title={formatNumberMinMaxDigits(p.ratingChange, 2, true)}
                                             aria-label={`Változás: ${formatNumberMinMaxDigits(p.ratingChange, 2)}`}
                                         >
-                                            {p.ratingChange > 0 && <ArrowUpIcon className="text-green-600" />}
-                                            {p.ratingChange === 0 && <CircleIcon className="text-yellow-600" />}
-                                            {p.ratingChange < 0 && <ArrowDownIcon className="text-red-600" />}
+                                            {p.ratingChange > 0 && (
+                                                <ArrowUpIcon weight="bold" className="text-green-900" />
+                                            )}
+                                            {p.ratingChange === 0 && (
+                                                <CircleIcon weight="bold" className="text-yellow-900" />
+                                            )}
+                                            {p.ratingChange < 0 && (
+                                                <ArrowDownIcon weight="bold" className="text-red-900" />
+                                            )}
                                         </div>
                                     </div>
                                 </div>

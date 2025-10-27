@@ -28,7 +28,7 @@ export function NavbarUserSection({ origin }: { origin: string }): JSX.Element {
             {session.status === 'authenticated' && (
                 <>
                     <div
-                        className="flex h-6.5 w-6.5 items-center justify-center overflow-hidden rounded-md border-1"
+                        className="glass-nested flex h-6.5 w-6.5 items-center justify-center overflow-hidden rounded-md"
                         aria-label={loggedIn}
                         title={loggedIn}
                     >
@@ -57,7 +57,7 @@ export function NavbarUserSection({ origin }: { origin: string }): JSX.Element {
             )}
             {session.status === 'loading' && (
                 <div
-                    className="flex h-6.5 w-6.5 items-center justify-center overflow-hidden rounded-md border-1"
+                    className="glass-nested flex h-6.5 w-6.5 items-center justify-center rounded-md"
                     aria-label={loggedIn}
                     title={loggedIn}
                 >

@@ -9,11 +9,11 @@ import { StatisticCard } from './statistic-card';
 
 export function RandomPlayerCard({ playerStatistics }: { playerStatistics: PlayerStatisticsDto }): JSX.Element {
     return (
-        <Card>
+        <Card className="h-full">
             <div className="flex h-full grow flex-col gap-1 sm:gap-2">
                 <div className="flex justify-between">
                     <h3 className="order-2 text-center text-lg">
-                        <Link href={`/players/${playerStatistics.id}`} className="text-sky-800 hover:text-sky-600">
+                        <Link href={`/players/${playerStatistics.id}`} className="link">
                             {playerStatistics.name}
                         </Link>
                     </h3>
@@ -25,7 +25,7 @@ export function RandomPlayerCard({ playerStatistics }: { playerStatistics: Playe
                     </div>
                 </div>
                 <div className="flex grow gap-1 sm:gap-2">
-                    <div className="hidden aspect-[9/16] h-full items-center justify-center rounded-lg border-1 lg:flex">
+                    <div className="glass-nested hidden aspect-[9/16] h-full items-center justify-center rounded-lg lg:flex">
                         <UserCircleIcon size={64} weight="thin" alt="" />
                     </div>
                     <div className="flex w-full flex-col gap-1 sm:gap-2">

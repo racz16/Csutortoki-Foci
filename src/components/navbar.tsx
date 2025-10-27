@@ -15,7 +15,7 @@ export function Navbar(): JSX.Element {
         { id: 3, name: 'Játékosok', href: '/players' },
     ];
     return (
-        <header className="sticky top-0 z-1 flex flex-col justify-center border-b-1 bg-white p-2 sm:flex-row">
+        <header className="glass-navbar sticky top-0 z-1 flex flex-col justify-center p-2 sm:flex-row">
             <Link
                 className="absolute bottom-100 self-center rounded-lg border-1 bg-white p-2 focus:-bottom-12 sm:focus:-bottom-14"
                 href="#main-content"

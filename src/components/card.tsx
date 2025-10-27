@@ -9,7 +9,7 @@ export function Card({
     className?: string;
     size?: 'small' | 'large';
 }): JSX.Element {
-    let classes = size === 'small' ? 'h-full rounded-lg border-1 p-1' : 'h-full rounded-2xl border-1 p-1 sm:p-2';
+    let classes = size === 'small' ? 'h-full rounded-lg p-1 glass-nested' : 'rounded-2xl p-1 sm:p-2 glass';
     classes += ' ' + className;
     return <article className={classes}>{children}</article>;
 }
