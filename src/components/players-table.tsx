@@ -209,7 +209,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                         <CaretLineRightIcon />
                     </button>
                 </nav>
-                <div className="flex items-center justify-center gap-1">
+                <label className="flex items-center justify-center gap-1">
                     <div>Oldalméret</div>
                     <select
                         value={pageSize}
@@ -221,7 +221,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                         <option value={16}>16</option>
                         <option value={20}>20</option>
                     </select>
-                </div>
+                </label>
             </div>
         </Card>
     );
