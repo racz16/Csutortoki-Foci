@@ -71,7 +71,7 @@ export function SignInButtons(): JSX.Element | JSX.Element[] {
     return buttons.map((b) => (
         <button
             onClick={() => signIn(b.providerId, { callbackUrl })}
-            className={`flex h-10 w-70 cursor-pointer items-center gap-1 rounded-lg border-1 p-1 text-lg sm:h-12 sm:w-73 sm:gap-2 sm:p-2 ${b.classes} ${b.hoverClasses}`}
+            className={`flex h-10 w-65 cursor-pointer items-center gap-1 rounded-lg border-1 p-1 sm:h-12 sm:w-73 sm:gap-2 sm:p-2 sm:text-lg ${b.classes} ${b.hoverClasses}`}
             key={b.providerId}
         >
             {b.icon}
