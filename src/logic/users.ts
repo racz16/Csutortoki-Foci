@@ -1,4 +1,4 @@
-import { prismaClient } from './prisma';
+import prismaClient from './prisma';
 
 export async function isUserAdmin(email: string): Promise<boolean> {
     const user = await prismaClient.user.findFirst({

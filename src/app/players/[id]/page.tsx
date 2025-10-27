@@ -6,7 +6,7 @@ import { MatchesSkeleton } from '@/components/skeletons/matches-skeleton';
 import { PlayerStatisticsSkeleton } from '@/components/skeletons/player-statistics-skeleton';
 import { StatisticCard } from '@/components/statistic-card';
 import { getMatches } from '@/logic/matches';
-import { prismaClient } from '@/logic/prisma';
+import prismaClient from '@/logic/prisma';
 import { getPlayerStatistics } from '@/logic/statistics';
 import { UserCircleIcon } from '@phosphor-icons/react/dist/ssr';
 import { JSX, Suspense } from 'react';

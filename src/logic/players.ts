@@ -1,7 +1,7 @@
 import { PlayerListDto } from '@/dtos/player-list-dto';
 import { preventPrerenderingInCiPipeline } from '@/utility';
 import { ordinal } from 'openskill';
-import { prismaClient } from './prisma';
+import prismaClient from './prisma';
 
 interface PlayerQueryResult {
     id: number;

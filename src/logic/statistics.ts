@@ -1,7 +1,7 @@
 import { PlayerStatisticsDto } from '@/dtos/player-statistics-dto';
 import { StatisticDto } from '@/dtos/statistic-dto';
 import { preventPrerenderingInCiPipeline } from '@/utility';
-import { prismaClient } from './prisma';
+import prismaClient from './prisma';
 
 interface StatisticQueryResult {
     id: number;

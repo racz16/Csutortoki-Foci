@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { ordinal, rate, rating, Team } from 'openskill';
-import { prismaClient } from './logic/prisma';
+import prismaClient from './logic/prisma';
 import {
     GLOBAL_STATISTIC_AVERAGE_GOAL_COUNT_INDEX,
     GLOBAL_STATISTIC_AVERAGE_RATING_INDEX,

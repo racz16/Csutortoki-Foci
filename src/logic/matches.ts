@@ -3,7 +3,7 @@ import { MatchesDto } from '@/dtos/matches-dto';
 import { Prisma } from '@/generated/prisma';
 import { preventPrerenderingInCiPipeline } from '@/utility';
 import { ordinal, predictWin, rating, Team } from 'openskill';
-import { prismaClient } from './prisma';
+import prismaClient from './prisma';
 
 interface MatchQueryResult {
     id: number;
