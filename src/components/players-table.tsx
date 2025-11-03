@@ -127,7 +127,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     {!pagedPlayers.length && (
                         <tr>
                             <td colSpan={4}>
-                                <h3 className="p-2 text-center text-lg sm:p-4">Még nincsenek játékosok</h3>
+                                <h3 className="text-bg p-2 text-center text-lg sm:p-4">Még nincsenek játékosok</h3>
                             </td>
                         </tr>
                     )}

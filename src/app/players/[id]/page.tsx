@@ -42,7 +42,9 @@ async function PlayerStatisticsLazy({ playerId }: { playerId: number }): Promise
         <>
             <div className="flex h-8.5 items-center justify-between">
                 <h2 className="text-bg text-xl">{playerStatistics.name}</h2>
-                {!playerStatistics.regular && <div className="text-xs text-gray-500">Nem rendszeres játékos</div>}
+                {!playerStatistics.regular && (
+                    <div className="text-bg text-xs text-gray-800">Nem rendszeres játékos</div>
+                )}
                 <div className="flex gap-2">
                     <EditPlayerButton />
                     <DeletePlayerButton matchCount={playerStatistics.matchCount} />
@@ -72,7 +74,7 @@ async function PlayerStatisticsLazy({ playerId }: { playerId: number }): Promise
                             </div>
                         </Card>
                         <div className="flex w-full items-center justify-center p-2">
-                            <h3 className="text-center text-lg">Még nincsenek statisztikák</h3>
+                            <h3 className="text-bg text-center text-lg">Még nincsenek statisztikák</h3>
                         </div>
                     </div>
                 ))}

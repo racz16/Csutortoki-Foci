@@ -9,6 +9,6 @@ export default async function RandomPlayerStatisticsLazy(): Promise<JSX.Element>
     return playerStatistics ? (
         <RandomPlayerCard playerStatistics={playerStatistics} />
     ) : (
-        <h3 className="text-center text-lg">Még nincsenek játékosok</h3>
+        <h3 className="text-bg text-center text-lg">Még nincsenek játékosok</h3>
     );
 }

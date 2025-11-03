@@ -43,7 +43,7 @@ export default async function MainPage({ randomPlayer }: { randomPlayer: ReactNo
 
 async function LastMatchLazy(): Promise<JSX.Element> {
     const match = await getLastMatch();
-    return match ? <MatchCard match={match} /> : <h3 className="text-center text-lg">Még nincsenek meccsek</h3>;
+    return match ? <MatchCard match={match} /> : <h3 className="text-bg text-center text-lg">Még nincsenek meccsek</h3>;
 }
 
 async function GlobalStatisticsLazy(): Promise<JSX.Element | JSX.Element[]> {
@@ -55,6 +55,6 @@ async function GlobalStatisticsLazy(): Promise<JSX.Element | JSX.Element[]> {
             ))}
         </div>
     ) : (
-        <h3 className="text-center text-lg">Még nincsenek statisztikák</h3>
+        <h3 className="text-bg text-center text-lg">Még nincsenek statisztikák</h3>
     );
 }
