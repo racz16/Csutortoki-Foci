@@ -46,8 +46,17 @@ async function PlayerStatisticsLazy({ playerId }: { playerId: number }): Promise
                     <div className="text-bg text-xs text-gray-800">Nem rendszeres játékos</div>
                 )}
                 <div className="flex gap-2">
-                    <EditPlayerButton />
-                    <DeletePlayerButton matchCount={playerStatistics.matchCount} />
+                    <EditPlayerButton
+                        id={playerStatistics.id}
+                        name={playerStatistics.name}
+                        regular={playerStatistics.regular}
+                    />
+                    <DeletePlayerButton
+                        id={playerId}
+                        name={playerStatistics.name}
+                        matchCount={playerStatistics.matchCount}
+                        navigate={true}
+                    />
                 </div>
             </div>
             {playerStatistics.regular &&

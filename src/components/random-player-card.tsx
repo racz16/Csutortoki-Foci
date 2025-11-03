@@ -18,10 +18,18 @@ export function RandomPlayerCard({ playerStatistics }: { playerStatistics: Playe
                         </Link>
                     </h3>
                     <div className="order-1">
-                        <EditPlayerButton />
+                        <EditPlayerButton
+                            id={playerStatistics.id}
+                            name={playerStatistics.name}
+                            regular={playerStatistics.regular}
+                        />
                     </div>
                     <div className="order-3">
-                        <DeletePlayerButton matchCount={playerStatistics.matchCount} />
+                        <DeletePlayerButton
+                            id={playerStatistics.id}
+                            name={playerStatistics.name}
+                            matchCount={playerStatistics.matchCount}
+                        />
                     </div>
                 </div>
                 <div className="flex grow gap-1 sm:gap-2">

@@ -27,12 +27,16 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.dialog {
+    @apply m-auto w-128 max-w-95/100 rounded-2xl p-2 sm:p-4;
+}
+
 .link {
     @apply text-sky-800 hover:text-sky-600;
 }
 
 .interactivity {
-    @apply relative overflow-hidden rounded-md border-1 bg-white/50 p-1 not-disabled:cursor-pointer not-disabled:shadow disabled:border-gray-50/50 disabled:bg-gray-50/50 disabled:text-gray-500;
+    @apply relative overflow-hidden rounded-md border-1 bg-white/50 p-1 not-disabled:cursor-pointer not-disabled:shadow disabled:cursor-not-allowed disabled:border-gray-50/50 disabled:bg-gray-50/50 disabled:text-gray-500;
 }
 
 .interactivity-normal {
@@ -49,6 +53,10 @@ body {
 
 .glass {
     @apply relative overflow-hidden border-1 border-white/25 bg-radial-[circle_at_center,rgba(255_255_255/30%),rgba(255_255_255/20%)] shadow-md backdrop-blur-md backdrop-contrast-80 backdrop-saturate-120 before:absolute before:top-0 before:right-0 before:left-0 before:h-[1px] before:bg-linear-90 before:from-transparent before:via-white/75 before:to-transparent;
+}
+
+.glass-dialog {
+    @apply overflow-hidden border-1 border-white/25 bg-white/25 shadow-2xl backdrop-blur-md backdrop-contrast-80 backdrop-saturate-120 backdrop:bg-transparent backdrop:bg-radial backdrop:to-black/75 before:absolute before:top-0 before:right-0 before:left-0 before:h-[1px] before:bg-linear-90 before:from-transparent before:via-white/75 before:to-transparent;
 }
 
 .glass-navbar {

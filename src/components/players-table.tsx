@@ -156,8 +156,8 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                             {admin && (
                                 <td className="rounded-e-md border-1 border-s-0 border-white/25">
                                     <div className="flex justify-center gap-2">
-                                        <EditPlayerButton />
-                                        <DeletePlayerButton matchCount={p.matchCount} />
+                                        <EditPlayerButton id={p.id} name={p.name} regular={p.regular} />
+                                        <DeletePlayerButton id={p.id} name={p.name} matchCount={p.matchCount} />
                                     </div>
                                 </td>
                             )}

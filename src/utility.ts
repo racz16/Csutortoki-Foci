@@ -48,3 +48,5 @@ export async function preventPrerenderingInCiPipeline(): Promise<void> {
 export function isAdmin(session: SessionContextValue): boolean {
     return session.status === 'authenticated' && session.data.admin;
 }
+
+export class ValidationError extends Error {}

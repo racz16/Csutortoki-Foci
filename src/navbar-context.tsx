@@ -2,10 +2,10 @@
 
 import { createContext, useContext } from 'react';
 
-type NavbarContextType = {
+interface NavbarContextType {
     opened: boolean;
     toggle: () => void;
-};
+}
 
 export const NavbarContext = createContext<NavbarContextType | null>(null);
 
