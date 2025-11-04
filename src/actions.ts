@@ -51,7 +51,7 @@ export async function deletePlayerEndpoint(dto: DeletePlayerDto): Promise<Player
     return await deletePlayer(dto);
 }
 
-export async function updateAll(): Promise<void> {
+export async function updateAllEndpoint(): Promise<void> {
     await init();
     const matches = await prismaClient.match.findMany({
         orderBy: { date: 'asc' },
@@ -80,7 +80,7 @@ async function init(): Promise<void> {
     });
 }
 
-export async function updateLast(): Promise<void> {
+export async function updateLastEndpoint(): Promise<void> {
     const match = await prismaClient.match.findFirst({
         orderBy: { date: 'desc' },
         omit: { date: true, locationId: true },
@@ -169,4 +169,8 @@ function revalidate(): void {
     revalidatePath('/');
     revalidatePath('/matches');
     revalidatePath('/players');
+}
+
+export async function revalidatePathEndpoint(path: string, type?: 'layout' | 'page'): Promise<void> {
+    revalidatePath(path, type);
 }
