@@ -1,6 +1,5 @@
 import { MatchDto } from '@/dtos/match-dto';
 import { formatDateTime, formatNumberMinMaxDigits } from '@/utility';
-import { ArrowDownIcon, ArrowUpIcon, CircleIcon } from '@phosphor-icons/react/dist/ssr';
 import { Chivo_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { Fragment, JSX } from 'react';
@@ -62,25 +61,16 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                                         className={`flex items-center gap-1 ${i === 0 ? 'order-1 flex-wrap' : 'order-2 flex-wrap-reverse justify-end'}`}
                                     >
                                         <div
-                                            className={`glass-nested w-10 rounded-sm text-center text-sm ${i === 0 ? 'order-1' : 'order-2'}`}
-                                            aria-label={`Pontszám: ${formatNumberMinMaxDigits(p.beforeRating, 1)}`}
+                                            className={`w-8 rounded-sm bg-sky-900/50 text-center text-sm text-white ${i === 0 ? 'order-1' : 'order-2'}`}
+                                            aria-label={`Pontszám a meccs előtt: ${formatNumberMinMaxDigits(p.beforeRating, 1)}`}
                                         >
                                             <div aria-hidden="true">{formatNumberMinMaxDigits(p.beforeRating, 1)}</div>
                                         </div>
                                         <div
-                                            className={`${i === 0 ? 'order-2' : 'order-1'}`}
-                                            title={formatNumberMinMaxDigits(p.ratingChange, 2, true)}
-                                            aria-label={`Változás: ${formatNumberMinMaxDigits(p.ratingChange, 2)}`}
+                                            className={`w-8 rounded-sm text-center text-sm text-white ${i === 0 ? 'order-2' : 'order-1'} ${p.beforeRating === p.afterRating ? 'bg-yellow-900/50' : p.beforeRating > p.afterRating ? 'bg-red-900/50' : 'bg-green-900/50'}`}
+                                            aria-label={`Pontszám a meccs után: ${formatNumberMinMaxDigits(p.afterRating, 1)}`}
                                         >
-                                            {p.ratingChange > 0 && (
-                                                <ArrowUpIcon weight="bold" className="text-green-900" />
-                                            )}
-                                            {p.ratingChange === 0 && (
-                                                <CircleIcon weight="bold" className="text-yellow-900" />
-                                            )}
-                                            {p.ratingChange < 0 && (
-                                                <ArrowDownIcon weight="bold" className="text-red-900" />
-                                            )}
+                                            <div aria-hidden="true">{formatNumberMinMaxDigits(p.afterRating, 1)}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -89,19 +79,10 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                     ))}
                 </div>
             </div>
-            <div
-                className={`${chivoMonoFont.className} flex justify-center text-xl`}
-                aria-label={`Esélyek: ${(match.team[0].chance * 100).toFixed()}% - ${(match.team[1].chance * 100).toFixed()}%`}
-            >
-                <div className="w-1/2 text-right" aria-hidden="true">
-                    {(match.team[0].chance * 100).toFixed()}%
-                </div>
-                <div className="px-2" aria-hidden="true">
-                    -
-                </div>
-                <div className="w-1/2" aria-hidden="true">
-                    {(match.team[1].chance * 100).toFixed()}%
-                </div>
+            <div className="flex items-center justify-around text-xl">
+                <div className="order-2 px-2 text-sm">Esélyek</div>
+                <div className="order-1 w-1/2 text-center">{(match.team[0].chance * 100).toFixed()}%</div>
+                <div className="order-3 w-1/2 text-center">{(match.team[1].chance * 100).toFixed()}%</div>
             </div>
         </Card>
     );

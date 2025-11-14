@@ -113,18 +113,14 @@ function mapMatchToDto(match: MatchQueryResult): MatchDto {
         team: match.team.map((t, ti) => ({
             score: t.score,
             chance: predictions[ti],
-            teamPlayer: t.teamPlayer.map((tp) => {
-                const beforeRating = ordinal({ mu: tp.beforeMu, sigma: tp.beforeSigma });
-                const afterRating = ordinal({ mu: tp.afterMu, sigma: tp.afterSigma });
-                return {
-                    playerId: tp.player.id,
-                    name: tp.player.name,
-                    beforeRating: beforeRating,
-                    ratingChange: afterRating - beforeRating,
-                    regular: tp.player.regular,
-                    // weight: tp.weight ?? 1,
-                };
-            }),
+            teamPlayer: t.teamPlayer.map((tp) => ({
+                playerId: tp.player.id,
+                name: tp.player.name,
+                beforeRating: ordinal({ mu: tp.beforeMu, sigma: tp.beforeSigma }),
+                afterRating: ordinal({ mu: tp.afterMu, sigma: tp.afterSigma }),
+                regular: tp.player.regular,
+                // weight: tp.weight ?? 1,
+            })),
         })),
     };
 }
