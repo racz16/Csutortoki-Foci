@@ -87,7 +87,7 @@ export async function getLastMatch(): Promise<MatchDto | null> {
                 orderBy: { id: 'asc' },
                 include: {
                     teamPlayer: {
-                        orderBy: { player: { name: 'asc' } },
+                        orderBy: [{ player: { regular: 'desc' } }, { player: { name: 'asc' } }],
                         include: { player: { omit: { mu: true, sigma: true } } },
                         omit: { id: true, playerId: true, teamId: true, weight: true },
                     },
