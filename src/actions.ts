@@ -111,12 +111,9 @@ async function update(matchId: number): Promise<void> {
         omit: { id: true, matchId: true },
     });
     await updateRatings(teams);
-    for (const team of teams) {
-        for (const teamPlayer of team.teamPlayer) {
-            if (teamPlayer.player.regular) {
-                await updatePlayerStatistics(teamPlayer.player.id);
-            }
-        }
+    const playerIds = await prismaClient.player.findMany({ where: { regular: true }, select: { id: true } });
+    for (const { id } of playerIds) {
+        await updatePlayerStatistics(id);
     }
     await updateGlobalStatistics();
 }
