@@ -58,8 +58,7 @@ export function NavbarUserSection({ origin }: { origin: string }): JSX.Element {
             {session.status === 'loading' && (
                 <div
                     className="glass-nested flex h-6.5 w-6.5 items-center justify-center rounded-md"
-                    aria-label={loggedIn}
-                    title={loggedIn}
+                    aria-label="Betöltés"
                 >
                     <LoadingIndicator size={16} />
                 </div>
