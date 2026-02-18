@@ -1,62 +1,62 @@
 {
-    "name": "csutortoki-foci",
-    "displayName": "Csütörtöki Foci",
-    "author": {
-        "name": "Zalán Rácz",
-        "email": "zalan.racz.dev@gmail.com",
-        "url": "https://github.com/racz16"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/racz16/Csutortoki-Foci"
-    },
-    "license": "MIT",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "eslint": "eslint",
-        "prettier-lint": "prettier --check .",
-        "prettier-format": "prettier --write .",
-        "prisma-dev": "prisma dev",
-        "prisma-generate": "prisma generate",
-        "prisma-migrate": "prisma migrate dev",
-        "prisma-studio": "prisma studio",
-        "prisma-format-lint": "prisma format --check",
-        "prisma-format": "prisma format",
-        "prepare": "husky install"
-    },
-    "dependencies": {
-        "@phosphor-icons/react": "^2.1.10",
-        "@prisma/client": "^6.16.2",
-        "next": "^15.5.4",
-        "next-auth": "^4.24.11",
-        "openskill": "^4.1.0",
-        "react": "^19.1.1",
-        "react-dom": "^19.1.1"
-    },
-    "devDependencies": {
-        "@eslint/eslintrc": "^3.3.1",
-        "@tailwindcss/postcss": "^4.1.13",
-        "@types/node": "^24.5.2",
-        "@types/react": "^19.1.13",
-        "@types/react-dom": "^19.1.9",
-        "eslint": "^9.36.0",
-        "eslint-config-next": "^15.5.4",
-        "husky": "^9.1.7",
-        "lint-staged": "^16.2.0",
-        "prettier": "^3.6.2",
-        "prettier-plugin-organize-imports": "^4.3.0",
-        "prettier-plugin-tailwindcss": "^0.6.14",
-        "prisma": "^6.16.2",
-        "tailwindcss": "^4.1.13",
-        "tsx": "^4.20.5",
-        "typescript": "^5.9.2"
-    },
-    "lint-staged": {
-        "*": "prettier --write --ignore-unknown",
-        "*.prisma": "prisma format"
-    }
+  "name": "csutortoki-foci",
+  "displayName": "Csütörtöki Foci",
+  "author": {
+    "name": "Zalán Rácz",
+    "email": "zalan.racz.dev@gmail.com",
+    "url": "https://github.com/racz16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/racz16/Csutortoki-Foci"
+  },
+  "license": "MIT",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "eslint": "eslint",
+    "prettier-lint": "prettier --check .",
+    "prettier-format": "prettier --write .",
+    "prisma-dev": "prisma dev",
+    "prisma-generate": "prisma generate",
+    "prisma-migrate": "prisma migrate dev",
+    "prisma-studio": "prisma studio",
+    "prisma-format-lint": "prisma format --check",
+    "prisma-format": "prisma format",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@prisma/client": "^6.16.2",
+    "next": "15.5.9",
+    "next-auth": "^4.24.11",
+    "openskill": "^4.1.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "eslint": "^9.36.0",
+    "eslint-config-next": "^15.5.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "prisma": "^6.16.2",
+    "tailwindcss": "^4.1.13",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown",
+    "*.prisma": "prisma format"
+  }
 }
