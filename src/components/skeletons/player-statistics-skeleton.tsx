@@ -11,7 +11,7 @@ export function PlayerStatisticsSkeleton(): JSX.Element {
             </div>
             <div className="grid grid-cols-2 grid-rows-21 gap-2 sm:grid-cols-4 sm:grid-rows-9 sm:gap-4">
                 <Card className="col-span-2 row-span-6 flex items-end justify-center sm:col-span-1 lg:row-span-9">
-                    <div className="flex aspect-[9/16] w-50"></div>
+                    <div className="flex aspect-9/16 w-50"></div>
                 </Card>
                 {statisticPlaceholders.map((s, i) => (
                     <StatisticCardSkeleton

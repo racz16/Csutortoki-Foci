@@ -11,7 +11,7 @@ export function PlayerStatisticsCardSkeleton(): JSX.Element {
                     <div className="h-5 w-32 animate-pulse rounded bg-gray-500/50"></div>
                 </div>
                 <div className="flex grow gap-1 sm:gap-2">
-                    <div className="glass-nested hidden aspect-[9/16] h-full rounded-lg lg:block"></div>
+                    <div className="glass-nested hidden aspect-9/16 h-full rounded-lg lg:block"></div>
                     <div className="flex w-full flex-col gap-1 sm:gap-2">
                         <div className="grid grow grid-cols-2 gap-1 sm:gap-2">
                             {statisticPlaceholders.map((s, i) => (

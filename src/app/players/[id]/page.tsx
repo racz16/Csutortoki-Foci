@@ -63,7 +63,7 @@ async function PlayerStatisticsLazy({ playerId }: { playerId: number }): Promise
                 (playerStatistics.statistics.length ? (
                     <div className="grid grid-cols-2 grid-rows-21 gap-2 sm:grid-cols-4 sm:grid-rows-9 sm:gap-4">
                         <Card className="col-span-2 row-span-6 flex items-end justify-center sm:col-span-1 lg:row-span-9">
-                            <div className="flex aspect-[9/16] w-50 items-center justify-center">
+                            <div className="flex aspect-9/16 w-50 items-center justify-center">
                                 <UserCircleIcon size={64} weight="thin" alt="" />
                             </div>
                         </Card>
@@ -78,7 +78,7 @@ async function PlayerStatisticsLazy({ playerId }: { playerId: number }): Promise
                 ) : (
                     <div className="flex flex-col sm:flex-row">
                         <Card className="flex items-end justify-center">
-                            <div className="flex aspect-[9/16] w-50 items-center justify-center">
+                            <div className="flex aspect-9/16 w-50 items-center justify-center">
                                 <UserCircleIcon size={64} weight="thin" alt="" />
                             </div>
                         </Card>

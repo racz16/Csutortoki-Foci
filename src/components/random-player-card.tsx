@@ -33,7 +33,7 @@ export function RandomPlayerCard({ playerStatistics }: { playerStatistics: Playe
                     </div>
                 </div>
                 <div className="flex grow gap-1 sm:gap-2">
-                    <div className="glass-nested hidden aspect-[9/16] h-full items-center justify-center rounded-lg lg:flex">
+                    <div className="glass-nested hidden aspect-9/16 h-full items-center justify-center rounded-lg lg:flex">
                         <UserCircleIcon size={64} weight="thin" alt="" />
                     </div>
                     <div className="flex w-full flex-col gap-1 sm:gap-2">
