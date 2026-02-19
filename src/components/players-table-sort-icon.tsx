@@ -12,7 +12,7 @@ export function PlayersTableSortIcon({
     name: keyof PlayerListDto;
 }): JSX.Element {
     return (
-        <div className="text-sky-800 group-hover:text-sky-600" aria-hidden="true">
+        <div className="text-sky-800 group-hover:text-sky-600" aria-hidden>
             {orderBy === name && orderByDirection === 'asc' && <SortAscendingIcon weight="bold" />}
             {orderBy === name && orderByDirection === 'desc' && <SortDescendingIcon weight="bold" />}
             {orderBy !== name && name === 'name' && (

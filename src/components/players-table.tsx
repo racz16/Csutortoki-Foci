@@ -110,7 +110,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                                     onClick={() => changeOrder(c.key)}
                                     className={`group flex w-full cursor-pointer items-center gap-1 sm:gap-2 ${!c.leftAligned ? 'justify-center' : undefined}`}
                                 >
-                                    {!c.leftAligned && <div className="h-4 w-4" aria-hidden="true"></div>}
+                                    {!c.leftAligned && <div className="h-4 w-4" aria-hidden></div>}
                                     <div>{c.name}</div>
                                     <PlayersTableSortIcon
                                         name={c.key}
@@ -192,7 +192,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                         className="self-center"
                         aria-label={`${pageStartIndex}-${pageEndIndex} játékos az oldalon, ${filteredPlayers.length} összesen`}
                     >
-                        <div aria-hidden="true">{`${pageStartIndex}-${pageEndIndex} / ${filteredPlayers.length}`}</div>
+                        <div aria-hidden>{`${pageStartIndex}-${pageEndIndex} / ${filteredPlayers.length}`}</div>
                     </div>
                     <button
                         onClick={() => changePage(page + 1)}
