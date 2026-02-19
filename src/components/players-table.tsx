@@ -213,11 +213,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                 </nav>
                 <label className="flex items-center justify-center gap-1">
                     <div>Oldalméret</div>
-                    <select
-                        value={pageSize}
-                        onChange={(e) => changePageSize(e)}
-                        className="self-stretch rounded-md border-1 border-sky-800/50 bg-white/50 text-sky-800 shadow hover:bg-sky-600/75 hover:text-white focus:bg-sky-600/75 focus:text-white"
-                    >
+                    <select value={pageSize} onChange={(e) => changePageSize(e)} className="input">
                         <option value={8}>8</option>
                         <option value={12}>12</option>
                         <option value={16}>16</option>

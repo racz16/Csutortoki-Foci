@@ -43,7 +43,7 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                 <div className="grid grid-flow-col grid-cols-2 items-stretch gap-x-2 gap-y-1">
                     {match.team.map((t, i) => (
                         <Fragment key={i}>
-                            <div key={i} className="absolute -top-100 h-[1px] w-[1px] overflow-hidden">
+                            <div key={i} className="sr-only">
                                 {i === 0 ? 1 : 2}. csapat
                             </div>
                             {t.teamPlayer.map((p) => (
@@ -79,10 +79,10 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                     ))}
                 </div>
             </div>
-            <div className="flex items-center justify-around text-xl">
+            <div className="flex items-center justify-around">
                 <div className="order-2 px-2 text-sm">Esélyek</div>
-                <div className="order-1 w-1/2 text-center">{(match.team[0].chance * 100).toFixed()}%</div>
-                <div className="order-3 w-1/2 text-center">{(match.team[1].chance * 100).toFixed()}%</div>
+                <div className="order-1 w-1/2 text-center text-xl">{(match.team[0].chance * 100).toFixed()}%</div>
+                <div className="order-3 w-1/2 text-center text-xl">{(match.team[1].chance * 100).toFixed()}%</div>
             </div>
         </Card>
     );

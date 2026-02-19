@@ -23,7 +23,7 @@ export function NavLink({
     return (
         <Link
             href={href}
-            className={`interactivity interactivity-normal specular-big text-center sm:w-25 ${className}`}
+            className={`interactivity interactivity-normal specular-large text-center sm:w-25 ${className}`}
             onClick={hamburger ? toggle : undefined}
         >
             {children}
