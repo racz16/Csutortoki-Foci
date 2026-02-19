@@ -1,4 +1,10 @@
-import { PrismaClient } from '@/generated/prisma';
+import { Prisma, PrismaClient } from '@/generated/prisma';
+import { DefaultArgs } from '@/generated/prisma/runtime/library';
+
+export type TPrismaClient = Omit<
+    PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+    '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'
+>;
 
 declare global {
     var prismaClient: PrismaClient;

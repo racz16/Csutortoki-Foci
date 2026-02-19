@@ -5,4 +5,5 @@ export interface MatchDto {
     date: string;
     team: TeamDto[];
     location: string;
+    locationId: number;
 }

@@ -34,10 +34,10 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                         </span>
                     </div>
                     <div className="order-1">
-                        <EditMatchButton />
+                        <EditMatchButton match={match} />
                     </div>
                     <div className="order-3">
-                        <DeleteMatchButton />
+                        <DeleteMatchButton id={match.id} />
                     </div>
                 </div>
                 <div className="grid grid-flow-col grid-cols-2 items-stretch gap-x-2 gap-y-1">

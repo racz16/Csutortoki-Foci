@@ -12,6 +12,10 @@ export function Matches({ initialMatches, playerId }: { initialMatches: MatchesD
     const infiniteScrollTarget = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
+        setMatches(initialMatches);
+    }, [initialMatches]);
+
+    useEffect(() => {
         if (!infiniteScrollTarget.current || !matches.nextDate) {
             return;
         }

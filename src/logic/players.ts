@@ -1,9 +1,7 @@
-import { CreatePlayerDto } from '@/dtos/create-player-dto';
-import { DeletePlayerDto } from '@/dtos/delete-player-dto';
-import { EditPlayerDto } from '@/dtos/edit-player-dto';
+import { PlayerDto } from '@/dtos/player-dto';
 import { PlayerListDto } from '@/dtos/player-list-dto';
 import { PlayerStateDto } from '@/dtos/player-state-dto';
-import { preventPrerenderingInCiPipeline, ValidationError } from '@/utility';
+import { DEFAULT_MU, DEFAULT_SIGMA, preventPrerenderingInCiPipeline, ValidationError } from '@/utility';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -32,6 +30,11 @@ interface DeletePlayerQueryResult {
     _count: { teamPlayer: number; playerStatistic: number };
 }
 
+export async function getPlayerCount(): Promise<number> {
+    await preventPrerenderingInCiPipeline();
+    return await prismaClient.player.count();
+}
+
 export async function getPlayers(): Promise<PlayerListDto[]> {
     await preventPrerenderingInCiPipeline();
     const matchCount = await prismaClient.match.count();
@@ -52,7 +55,43 @@ function mapPlayerToListDto(player: PlayerQueryResult, matchCount: number): Play
     };
 }
 
-export async function createPlayer(player: CreatePlayerDto): Promise<PlayerStateDto | null> {
+export async function getAllPlayers(date?: Date): Promise<PlayerDto[]> {
+    await preventPrerenderingInCiPipeline();
+    const players = await prismaClient.player.findMany({
+        include: {
+            teamPlayer: {
+                take: 1,
+                where: { team: { match: { date: { lt: date } } } },
+                orderBy: { team: { match: { date: 'desc' } } },
+                omit: { beforeMu: true, beforeSigma: true, id: true, playerId: true, teamId: true, weight: true },
+            },
+        },
+        orderBy: [{ regular: 'desc' }, { name: 'asc' }],
+    });
+    return players.map((p) => {
+        let mu = date ? DEFAULT_MU : p.mu;
+        let sigma = date ? DEFAULT_SIGMA : p.sigma;
+        if (date && p.teamPlayer.length) {
+            mu = p.teamPlayer[0].afterMu;
+            sigma = p.teamPlayer[0].afterSigma;
+        }
+        return {
+            id: p.id,
+            name: p.name,
+            rating: ordinal({ mu, sigma }),
+            mu,
+            sigma,
+            regular: p.regular,
+        };
+    });
+}
+
+interface CreatePlayerDto {
+    name?: string;
+    regular: boolean;
+}
+
+export async function createPlayer(player: CreatePlayerDto): Promise<PlayerStateDto> {
     let id: number | null = null;
     try {
         const validationResult = await createPlayerValidate(player);
@@ -62,14 +101,13 @@ export async function createPlayer(player: CreatePlayerDto): Promise<PlayerState
         id = await createPlayerDatabase(player);
         createPlayerCache(id);
     } catch (error) {
-        if (error instanceof ValidationError) {
-            return { globalErrors: [error.message] };
-        } else {
-            return { globalErrors: ['Váratlan hiba történt'] };
-        }
+        return {
+            globalErrors: [error instanceof ValidationError ? error.message : 'Váratlan hiba történt'],
+            successful: false,
+            state: { ...player },
+        };
     }
     redirect(`/players/${id}`);
-    return null;
 }
 
 async function createPlayerValidate(player: CreatePlayerDto): Promise<PlayerStateDto | null> {
@@ -78,12 +116,14 @@ async function createPlayerValidate(player: CreatePlayerDto): Promise<PlayerStat
         throw new ValidationError('Nincs jogod a létrehozáshoz');
     }
 
-    if (!player.name) {
+    if (!player.name?.trim()) {
+        return { errors: { name: ['A név kitöltése kötelező'] }, successful: false, state: { ...player } };
+    } else if (player.name?.trim()?.length > 128) {
         return {
-            errors: { name: ['A név kitöltése kötelező'] },
+            errors: { name: ['A név nem lehet hosszabb 128 karakternél'] },
+            successful: false,
+            state: { ...player },
         };
-    } else if (player.name.length > 128) {
-        return { errors: { name: ['A név nem lehet hosszabb 128 karakternél'] } };
     }
 
     return null;
@@ -91,7 +131,7 @@ async function createPlayerValidate(player: CreatePlayerDto): Promise<PlayerStat
 
 async function createPlayerDatabase(player: CreatePlayerDto): Promise<number> {
     const { id } = await prismaClient.player.create({
-        data: { name: player.name, regular: player.regular, mu: 25, sigma: 25 / 3 },
+        data: { name: player.name!.trim(), regular: player.regular, mu: DEFAULT_MU, sigma: DEFAULT_SIGMA },
         omit: { name: true, mu: true, sigma: true, regular: true },
     });
     return id;
@@ -102,31 +142,35 @@ function createPlayerCache(id: number): void {
     revalidatePath(`/players/${id}`);
 }
 
-export async function editPlayer(player: EditPlayerDto): Promise<PlayerStateDto | null> {
+interface EditPlayerDto {
+    id?: number;
+    name?: string;
+    regular: boolean;
+}
+
+export async function editPlayer(player: EditPlayerDto): Promise<PlayerStateDto> {
     try {
         const oldPlayer = await prismaClient.player.findFirst({
             where: { id: player.id },
             include: { _count: { select: { teamPlayer: {}, playerStatistic: {} } } },
             omit: { id: true, mu: true, sigma: true },
         });
-        if (oldPlayer && player.name === oldPlayer.name && player.regular === oldPlayer.regular) {
-            return null;
+        if (player.name?.trim() !== oldPlayer?.name || player.regular !== oldPlayer?.regular) {
+            const validationResult = await editPlayerValidate(player, oldPlayer);
+            if (validationResult) {
+                return validationResult;
+            }
+            await editPlayerDatabase(player, oldPlayer!);
+            editPlayerCache();
         }
-        const validationResult = await editPlayerValidate(player, oldPlayer);
-        if (validationResult) {
-            return validationResult;
-        }
-        await editPlayerDatabase(player, oldPlayer!);
-        editPlayerCache();
     } catch (error) {
-        if (error instanceof ValidationError) {
-            return { globalErrors: [error.message] };
-        } else {
-            return { globalErrors: ['Váratlan hiba történt'] };
-        }
+        return {
+            globalErrors: [error instanceof ValidationError ? error.message : 'Váratlan hiba történt'],
+            successful: false,
+            state: { ...player },
+        };
     }
     redirect(`/players/${player.id}`);
-    return null;
 }
 
 async function editPlayerValidate(
@@ -141,33 +185,37 @@ async function editPlayerValidate(
         throw new ValidationError('A játékos nem létezik');
     }
 
-    if (!player.name) {
+    if (!player.name?.trim()) {
+        return { errors: { name: ['A név kitöltése kötelező'] }, successful: false, state: { ...player } };
+    } else if (player.name?.trim()?.length > 128) {
         return {
-            errors: { name: ['A név kitöltése kötelező'] },
+            errors: { name: ['A név nem lehet hosszabb 128 karakternél'] },
+            successful: false,
+            state: { ...player },
         };
-    } else if (player.name.length > 128) {
-        return { errors: { name: ['A név nem lehet hosszabb 128 karakternél'] } };
     }
 
     return null;
 }
 
 async function editPlayerDatabase(player: EditPlayerDto, oldPlayer: EditPlayerQueryResult): Promise<void> {
-    await prismaClient.player.update({
-        data: { name: player.name, regular: player.regular },
-        where: { id: player.id },
-        omit: { mu: true, name: true, regular: true, sigma: true },
-    });
-    if (oldPlayer._count.playerStatistic && !player.regular) {
-        await prismaClient.playerStatistic.deleteMany({
-            where: { playerId: player.id },
+    await prismaClient.$transaction(async (pc) => {
+        await pc.player.update({
+            data: { name: player.name?.trim(), regular: player.regular },
+            where: { id: player.id },
+            omit: { mu: true, name: true, regular: true, sigma: true },
         });
-    } else if (oldPlayer._count.teamPlayer && player.regular && !oldPlayer.regular) {
-        await updatePlayerStatistics(player.id);
-    }
-    if ((player.regular || oldPlayer.regular) && oldPlayer._count.teamPlayer) {
-        await updateGlobalStatistics();
-    }
+        if (oldPlayer._count.playerStatistic && !player.regular) {
+            await pc.playerStatistic.deleteMany({
+                where: { playerId: player.id },
+            });
+        } else if (oldPlayer._count.teamPlayer && player.regular && !oldPlayer.regular) {
+            await updatePlayerStatistics(pc, player.id!);
+        }
+        if ((player.regular || oldPlayer.regular) && oldPlayer._count.teamPlayer) {
+            await updateGlobalStatistics(pc);
+        }
+    });
 }
 
 function editPlayerCache(): void {
@@ -177,27 +225,31 @@ function editPlayerCache(): void {
     revalidatePath('/players/[id]', 'page');
 }
 
-export async function deletePlayer(dto: DeletePlayerDto): Promise<PlayerStateDto | null> {
+interface DeletePlayerDto {
+    id?: number;
+    navigate: boolean;
+}
+
+export async function deletePlayer(player: DeletePlayerDto): Promise<PlayerStateDto> {
     try {
-        const player = await prismaClient.player.findFirst({
-            where: { id: dto.id },
+        const dbPlayer = await prismaClient.player.findFirst({
+            where: { id: player.id },
             include: { _count: { select: { teamPlayer: {}, playerStatistic: {} } } },
             omit: { id: true, mu: true, name: true, sigma: true },
         });
-        await deletePlayerValidate(player);
-        await deletePlayerDatabase(dto, player!);
-        deletePlayerCache(dto);
+        await deletePlayerValidate(dbPlayer);
+        await deletePlayerDatabase(player, dbPlayer!);
+        deletePlayerCache(player);
     } catch (error) {
-        if (error instanceof ValidationError) {
-            return { globalErrors: [error.message] };
-        } else {
-            return { globalErrors: ['Váratlan hiba történt'] };
-        }
+        return {
+            globalErrors: [error instanceof ValidationError ? error.message : 'Váratlan hiba történt'],
+            successful: false,
+        };
     }
-    if (dto.navigate) {
+    if (player.navigate) {
         redirect('/players');
     }
-    return null;
+    return { successful: true };
 }
 
 async function deletePlayerValidate(player: DeletePlayerQueryResult | null): Promise<void> {
@@ -213,14 +265,16 @@ async function deletePlayerValidate(player: DeletePlayerQueryResult | null): Pro
     }
 }
 
-async function deletePlayerDatabase(dto: DeletePlayerDto, player: DeletePlayerQueryResult): Promise<void> {
-    if (player._count.playerStatistic) {
-        await prismaClient.playerStatistic.deleteMany({ where: { playerId: dto.id } });
-    }
-    await prismaClient.player.delete({ where: { id: dto.id } });
+async function deletePlayerDatabase(player: DeletePlayerDto, dbPlayer: DeletePlayerQueryResult): Promise<void> {
+    await prismaClient.$transaction(async (pc) => {
+        if (dbPlayer._count.playerStatistic) {
+            await pc.playerStatistic.deleteMany({ where: { playerId: player.id } });
+        }
+        await pc.player.delete({ where: { id: player.id } });
+    });
 }
 
-function deletePlayerCache(dto: DeletePlayerDto): void {
+function deletePlayerCache(player: DeletePlayerDto): void {
     revalidatePath('/players');
-    revalidatePath(`/players/${dto.id}`);
+    revalidatePath(`/players/${player.id}`);
 }

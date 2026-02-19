@@ -2,11 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { rate, rating, Team } from 'openskill';
-import { DeletePlayerDto } from './dtos/delete-player-dto';
+import { MatchStateDto } from './dtos/match-state-dto';
 import { PlayerStateDto } from './dtos/player-state-dto';
+import { createMatch, deleteMatch, editMatch } from './logic/matches';
 import { createPlayer, deletePlayer, editPlayer } from './logic/players';
-import prismaClient from './logic/prisma';
+import prismaClient, { TPrismaClient } from './logic/prisma';
 import { updateGlobalStatistics, updatePlayerStatistics } from './logic/statistics';
+import { DEFAULT_MU, DEFAULT_SIGMA } from './utility';
 
 interface TeamRatingQueryResult {
     score: number;
@@ -25,57 +27,113 @@ interface PlayerRatingQueryResult {
     sigma: number;
 }
 
-export async function createPlayerEndpoint(
-    prevState: PlayerStateDto | null,
-    player: FormData
-): Promise<PlayerStateDto | null> {
+export async function createMatchEndpoint(prevState: MatchStateDto, match: FormData): Promise<MatchStateDto> {
+    return await createMatch({
+        date: getDate(match, 'date'),
+        location: getNumber(match, 'location'),
+        score1: getNumber(match, 'score1'),
+        score2: getNumber(match, 'score2'),
+        team1: getAllNumbers(match, 'team1'),
+        team2: getAllNumbers(match, 'team2'),
+    });
+}
+
+export async function editMatchEndpoint(prevState: MatchStateDto, match: FormData): Promise<MatchStateDto> {
+    return await editMatch({
+        id: getNumber(match, 'id'),
+        date: getDate(match, 'date'),
+        location: getNumber(match, 'location'),
+        score1: getNumber(match, 'score1'),
+        score2: getNumber(match, 'score2'),
+        team1: getAllNumbers(match, 'team1'),
+        team2: getAllNumbers(match, 'team2'),
+    });
+}
+
+export async function deleteMatchEndpoint(prevState: MatchStateDto, match: FormData): Promise<MatchStateDto> {
+    return await deleteMatch({
+        id: getNumber(match, 'id'),
+    });
+}
+
+export async function createPlayerEndpoint(prevState: PlayerStateDto, player: FormData): Promise<PlayerStateDto> {
     return await createPlayer({
-        name: player.get('name')?.toString()?.trim() ?? '',
-        regular: player.get('regular') === 'on',
+        name: getString(player, 'name'),
+        regular: getBoolean(player, 'regular'),
     });
 }
 
-export async function editPlayerEndpoint(
-    id: number,
-    prevState: PlayerStateDto | null,
-    player: FormData
-): Promise<PlayerStateDto | null> {
+export async function editPlayerEndpoint(prevState: PlayerStateDto, player: FormData): Promise<PlayerStateDto> {
     return await editPlayer({
-        id,
-        name: player.get('name')?.toString()?.trim() ?? '',
-        regular: player.get('regular') === 'on',
+        id: getNumber(player, 'id'),
+        name: getString(player, 'name'),
+        regular: getBoolean(player, 'regular'),
     });
 }
 
-export async function deletePlayerEndpoint(dto: DeletePlayerDto): Promise<PlayerStateDto | null> {
-    return await deletePlayer(dto);
+export async function deletePlayerEndpoint(prevState: PlayerStateDto, player: FormData): Promise<PlayerStateDto> {
+    return await deletePlayer({
+        id: getNumber(player, 'id'),
+        navigate: getBoolean(player, 'navigate'),
+    });
+}
+
+function getNumber(form: FormData, key: string): number | undefined {
+    const rawValue = form.get(key);
+    return rawValue === null ? undefined : +rawValue;
+}
+
+function getAllNumbers(form: FormData, key: string): number[] {
+    return form.getAll(key).map((x) => +x);
+}
+
+function getString(form: FormData, key: string): string | undefined {
+    const rawValue = form.get(key);
+    return rawValue === null ? undefined : rawValue.toString();
+}
+
+function getBoolean(form: FormData, key: string): boolean {
+    return form.has(key);
+}
+
+function getDate(form: FormData, key: string): Date | undefined {
+    const rawValue = form.get(key);
+    if (rawValue) {
+        const date = new Date(rawValue.toString());
+        date.setSeconds(0, 0);
+        return date;
+    } else {
+        return undefined;
+    }
 }
 
 export async function updateAllEndpoint(): Promise<void> {
-    await init();
-    const matches = await prismaClient.match.findMany({
-        orderBy: { date: 'asc' },
-        omit: { date: true, locationId: true },
+    await prismaClient.$transaction(async (pc) => {
+        await init(pc);
+        const matches = await pc.match.findMany({
+            orderBy: { date: 'asc' },
+            omit: { date: true, locationId: true },
+        });
+        for (const match of matches) {
+            await update(pc, match.id);
+        }
     });
-    for (const match of matches) {
-        await update(match.id);
-    }
     revalidate();
 }
 
-async function init(): Promise<void> {
-    await prismaClient.player.updateMany({
+async function init(pc: TPrismaClient): Promise<void> {
+    await pc.player.updateMany({
         data: {
-            mu: 25.0,
-            sigma: 25.0 / 3.0,
+            mu: DEFAULT_MU,
+            sigma: DEFAULT_SIGMA,
         },
     });
-    await prismaClient.teamPlayer.updateMany({
+    await pc.teamPlayer.updateMany({
         data: {
-            beforeMu: 25.0,
-            beforeSigma: 25.0 / 3.0,
-            afterMu: 25.0,
-            afterSigma: 25.0 / 3.0,
+            beforeMu: DEFAULT_MU,
+            beforeSigma: DEFAULT_SIGMA,
+            afterMu: DEFAULT_MU,
+            afterSigma: DEFAULT_SIGMA,
         },
     });
 }
@@ -86,13 +144,15 @@ export async function updateLastEndpoint(): Promise<void> {
         omit: { date: true, locationId: true },
     });
     if (match) {
-        await update(match.id);
+        await prismaClient.$transaction(async (pc) => {
+            await update(pc, match.id);
+        });
     }
     revalidate();
 }
 
-async function update(matchId: number): Promise<void> {
-    const teams = await prismaClient.team.findMany({
+async function update(pc: TPrismaClient, matchId: number): Promise<void> {
+    const teams = await pc.team.findMany({
         where: { matchId },
         include: {
             teamPlayer: {
@@ -110,15 +170,15 @@ async function update(matchId: number): Promise<void> {
         },
         omit: { id: true, matchId: true },
     });
-    await updateRatings(teams);
-    const playerIds = await prismaClient.player.findMany({ where: { regular: true }, select: { id: true } });
+    await updateRatings(pc, teams);
+    const playerIds = await pc.player.findMany({ where: { regular: true }, select: { id: true } });
     for (const { id } of playerIds) {
-        await updatePlayerStatistics(id);
+        await updatePlayerStatistics(pc, id);
     }
-    await updateGlobalStatistics();
+    await updateGlobalStatistics(pc);
 }
 
-async function updateRatings(teams: TeamRatingQueryResult[]): Promise<void> {
+async function updateRatings(pc: TPrismaClient, teams: TeamRatingQueryResult[]): Promise<void> {
     const osResults = computeResults(teams);
     for (let i = 0; i < teams.length; i++) {
         const team = teams[i];
@@ -126,7 +186,7 @@ async function updateRatings(teams: TeamRatingQueryResult[]): Promise<void> {
         for (let j = 0; j < team.teamPlayer.length; j++) {
             const teamPlayer = team.teamPlayer[j];
             const osRating = osTeam[j];
-            await prismaClient.teamPlayer.update({
+            await pc.teamPlayer.update({
                 data: {
                     beforeMu: teamPlayer.player.mu,
                     beforeSigma: teamPlayer.player.sigma,
@@ -135,7 +195,7 @@ async function updateRatings(teams: TeamRatingQueryResult[]): Promise<void> {
                 },
                 where: { id: teamPlayer.id },
             });
-            await prismaClient.player.update({
+            await pc.player.update({
                 data: { mu: osRating.mu, sigma: osRating.sigma },
                 where: { id: teamPlayer.player.id },
             });
@@ -166,6 +226,7 @@ function revalidate(): void {
     revalidatePath('/');
     revalidatePath('/matches');
     revalidatePath('/players');
+    revalidatePath('/players/[id]', 'page');
 }
 
 export async function revalidatePathEndpoint(path: string, type?: 'layout' | 'page'): Promise<void> {

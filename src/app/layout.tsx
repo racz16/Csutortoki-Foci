@@ -1,3 +1,4 @@
+import DialogProvider from '@/components/dialog-provider';
 import { Navbar } from '@/components/navbar';
 import SessionProvider from '@/components/session-provider';
 import type { Metadata } from 'next';
@@ -28,10 +29,12 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
                 className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-[repeating-linear-gradient(45deg,#a5d56f,#cdee6b_150px)] antialiased`}
             >
                 <SessionProvider>
-                    <Navbar />
-                    <main id="main-content" className="flex grow-1 justify-center focus:outline-0" tabIndex={-1}>
-                        <div className="m-2 mt-4 w-full sm:m-2 sm:mt-4 lg:w-5xl">{children}</div>
-                    </main>
+                    <DialogProvider>
+                        <Navbar />
+                        <main id="main-content" className="flex grow-1 justify-center focus:outline-0" tabIndex={-1}>
+                            <div className="m-2 mt-4 w-full sm:m-2 sm:mt-4 lg:w-5xl">{children}</div>
+                        </main>
+                    </DialogProvider>
                 </SessionProvider>
             </body>
         </html>

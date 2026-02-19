@@ -1,22 +1,25 @@
 'use client';
 
 import { isAdmin } from '@/utility';
-import { PlusIcon } from '@phosphor-icons/react';
+import { PlusIcon, StrategyIcon } from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
 import { JSX } from 'react';
+import { useDialog } from '../dialog-provider';
+import { MatchDialog } from '../match-dialog';
 
-export function NewMatchButton(): JSX.Element {
+export function NewMatchButton({ playerCount }: { playerCount: number }): JSX.Element {
+    const { open } = useDialog();
     const session = useSession();
-    if (!isAdmin(session)) {
-        return <></>;
-    }
+    const admin = isAdmin(session);
     return (
         <button
-            onClick={() => alert('Meccs létrehozása')}
+            onClick={() => open(MatchDialog, {}, 'large')}
             className="interactivity interactivity-normal"
-            aria-label="Létrehozás"
+            disabled={playerCount < 2}
+            title={playerCount < 2 ? 'Egy meccshez kell legalább 2 játékos' : undefined}
+            aria-label={admin ? 'Létrehozás' : 'Meccs tervező'}
         >
-            <PlusIcon weight="bold" />
+            {admin ? <PlusIcon weight="bold" /> : <StrategyIcon weight="bold" />}
         </button>
     );
 }

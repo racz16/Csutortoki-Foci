@@ -6,9 +6,8 @@ import {
     formatNumberMinMaxDigits,
     preventPrerenderingInCiPipeline,
 } from '@/utility';
-import { revalidatePath } from 'next/cache';
 import { ordinal } from 'openskill';
-import prismaClient from './prisma';
+import prismaClient, { TPrismaClient } from './prisma';
 
 interface StatisticQueryResult {
     id: number;
@@ -153,8 +152,8 @@ function mapStatisticToDto(statistic: StatisticQueryResult): StatisticDto {
     };
 }
 
-export async function updateGlobalStatistics(): Promise<void> {
-    const matches = await prismaClient.match.findMany({
+export async function updateGlobalStatistics(pc: TPrismaClient): Promise<void> {
+    const matches = await pc.match.findMany({
         omit: { id: true, locationId: true },
         include: {
             team: {
@@ -165,7 +164,7 @@ export async function updateGlobalStatistics(): Promise<void> {
     if (!matches.length) {
         return;
     }
-    const players = await prismaClient.player.findMany({
+    const players = await pc.player.findMany({
         omit: { id: true, regular: true },
         where: { regular: true, teamPlayer: { some: {} } },
         include: { _count: { select: { teamPlayer: {} } } },
@@ -174,7 +173,7 @@ export async function updateGlobalStatistics(): Promise<void> {
         return;
     }
 
-    const oldStatistics = await prismaClient.globalStatistic.findMany({
+    const oldStatistics = await pc.globalStatistic.findMany({
         omit: { details: true, extraDetails: true, extraDetailsTooltip: true, name: true, value: true },
     });
 
@@ -199,12 +198,12 @@ export async function updateGlobalStatistics(): Promise<void> {
     for (const newStatistic of newStatistics) {
         const oldStatistic = oldStatistics.find((ps) => ps.index === newStatistic.index);
         if (oldStatistic) {
-            await prismaClient.globalStatistic.update({
+            await pc.globalStatistic.update({
                 data: newStatistic,
                 where: { id: oldStatistic.id },
             });
         } else {
-            await prismaClient.globalStatistic.create({ data: newStatistic });
+            await pc.globalStatistic.create({ data: newStatistic });
         }
     }
 }
@@ -375,9 +374,9 @@ function getAverageRatingGlobalStatistic(players: PlayerGlobalStatisticsQueryRes
     };
 }
 
-export async function updatePlayerStatistics(playerId: number): Promise<void> {
-    const matchCount = await prismaClient.match.count();
-    const matches = await prismaClient.match.findMany({
+export async function updatePlayerStatistics(pc: TPrismaClient, playerId: number): Promise<void> {
+    const matchCount = await pc.match.count();
+    const matches = await pc.match.findMany({
         where: { team: { some: { teamPlayer: { some: { playerId } } } } },
         include: {
             team: {
@@ -399,7 +398,7 @@ export async function updatePlayerStatistics(playerId: number): Promise<void> {
         orderBy: { date: 'desc' },
         omit: { id: true, date: true, locationId: true },
     });
-    const oldStatistics = await prismaClient.playerStatistic.findMany({
+    const oldStatistics = await pc.playerStatistic.findMany({
         where: { playerId },
         omit: { playerId: true, details: true, extraDetails: true, extraDetailsTooltip: true, name: true, value: true },
     });
@@ -429,15 +428,14 @@ export async function updatePlayerStatistics(playerId: number): Promise<void> {
     for (const newStatistic of newStatistics) {
         const oldStatistic = oldStatistics.find((ps) => ps.index === newStatistic.index);
         if (oldStatistic) {
-            await prismaClient.playerStatistic.update({
+            await pc.playerStatistic.update({
                 data: newStatistic,
                 where: { id: oldStatistic.id },
             });
         } else {
-            await prismaClient.playerStatistic.create({ data: { playerId, ...newStatistic } });
+            await pc.playerStatistic.create({ data: { playerId, ...newStatistic } });
         }
     }
-    revalidatePlayer(playerId);
 }
 
 function getRatingPlayerStatistic(teamPlayers: TeamPlayerPlayerStatisticsQueryResult[]): PlayerStatisticUpdate {
@@ -554,8 +552,4 @@ function mapMatchResultToInitial(result: number): string {
     } else {
         return 'D';
     }
-}
-
-function revalidatePlayer(playerId: number): void {
-    revalidatePath(`/players/${playerId}`);
 }
