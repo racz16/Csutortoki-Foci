@@ -32,11 +32,11 @@ body {
 }
 
 .dialog {
-    @apply m-auto w-128 max-w-95/100 rounded-2xl p-2 sm:p-4;
+    @apply m-auto w-lg max-w-95/100 rounded-2xl p-2 sm:p-4;
 }
 
 .dialog-large {
-    @apply m-auto h-256 max-h-95/100 w-256 max-w-95/100 rounded-2xl p-2 sm:p-4;
+    @apply m-auto h-256 max-h-95/100 w-5xl max-w-95/100 rounded-2xl p-2 sm:p-4;
 }
 
 .link {
@@ -44,7 +44,7 @@ body {
 }
 
 .interactivity {
-    @apply relative overflow-hidden rounded-md border-1 bg-white/50 p-1 not-disabled:cursor-pointer not-disabled:shadow disabled:cursor-not-allowed disabled:border-gray-50/50 disabled:bg-gray-50/50 disabled:text-gray-500;
+    @apply relative overflow-hidden rounded-md border bg-white/50 p-1 not-disabled:cursor-pointer not-disabled:shadow disabled:cursor-not-allowed disabled:border-gray-50/50 disabled:bg-gray-50/50 disabled:text-gray-500;
 }
 
 .interactivity-normal {
@@ -60,35 +60,35 @@ body {
 }
 
 .glass {
-    @apply relative overflow-hidden border-1 border-white/25 bg-radial-[circle_at_center,rgba(255_255_255/30%),rgba(255_255_255/20%)] shadow-md backdrop-blur-md backdrop-contrast-80 backdrop-saturate-120 before:absolute before:top-0 before:right-0 before:left-0 before:h-[1px] before:bg-linear-90 before:from-transparent before:via-white/75 before:to-transparent;
+    @apply relative overflow-hidden border border-white/25 bg-radial-[circle_at_center,rgba(255_255_255/30%),rgba(255_255_255/20%)] shadow-md backdrop-blur-md backdrop-contrast-80 backdrop-saturate-120 before:absolute before:top-0 before:right-0 before:left-0 before:h-px before:bg-linear-90 before:from-transparent before:via-white/75 before:to-transparent;
 }
 
 .glass-dialog {
-    @apply overflow-hidden border-1 border-white/25 bg-white/25 shadow-2xl backdrop-blur-md backdrop-contrast-80 backdrop-saturate-120 backdrop:bg-transparent backdrop:bg-radial backdrop:to-black/75 before:absolute before:top-0 before:right-0 before:left-0 before:h-[1px] before:bg-linear-90 before:from-transparent before:via-white/75 before:to-transparent;
+    @apply overflow-hidden border border-white/25 bg-white/25 shadow-2xl backdrop-blur-md backdrop-contrast-80 backdrop-saturate-120 backdrop:bg-transparent backdrop:bg-radial backdrop:to-black/75 before:absolute before:top-0 before:right-0 before:left-0 before:h-px before:bg-linear-90 before:from-transparent before:via-white/75 before:to-transparent;
 }
 
 .glass-navbar {
-    @apply border-b-1 border-white/25 bg-white/25 shadow-lg backdrop-blur-lg backdrop-contrast-80 backdrop-saturate-120;
+    @apply border-b border-white/25 bg-white/25 shadow-lg backdrop-blur-lg backdrop-contrast-80 backdrop-saturate-120;
 }
 
 .glass-nested {
-    @apply border-1 border-white/25 bg-white/10 shadow-sm backdrop-contrast-80;
+    @apply border border-white/25 bg-white/10 shadow-sm backdrop-contrast-80;
 }
 
 .glass-selected {
-    @apply border-1 border-white/25 bg-white/30 shadow-sm backdrop-contrast-80;
+    @apply border border-white/25 bg-white/30 shadow-sm backdrop-contrast-80;
 }
 
 .specular-large {
-    @apply not-disabled:after:absolute not-disabled:after:top-1/4 not-disabled:after:left-[-75%] not-disabled:after:h-1/2 not-disabled:after:w-[75%] not-disabled:after:rotate-45 not-disabled:after:bg-white/75 not-disabled:hover:after:left-[100%] not-disabled:hover:after:transition-[left] not-disabled:hover:after:duration-500;
+    @apply not-disabled:after:absolute not-disabled:after:top-1/4 not-disabled:after:left-[-75%] not-disabled:after:h-1/2 not-disabled:after:w-[75%] not-disabled:after:rotate-45 not-disabled:after:bg-white/75 not-disabled:hover:after:left-full not-disabled:hover:after:transition-[left] not-disabled:hover:after:duration-500;
 }
 
 .specular-small {
-    @apply not-disabled:after:absolute not-disabled:after:top-1/4 not-disabled:after:left-[-200%] not-disabled:after:h-1/2 not-disabled:after:w-[200%] not-disabled:after:rotate-45 not-disabled:after:bg-white/75 not-disabled:hover:after:left-[100%] not-disabled:hover:after:transition-[left] not-disabled:hover:after:duration-500;
+    @apply not-disabled:after:absolute not-disabled:after:top-1/4 not-disabled:after:left-[-200%] not-disabled:after:h-1/2 not-disabled:after:w-[200%] not-disabled:after:rotate-45 not-disabled:after:bg-white/75 not-disabled:hover:after:left-full not-disabled:hover:after:transition-[left] not-disabled:hover:after:duration-500;
 }
 
 .input {
-    @apply w-full rounded-md border-1 border-sky-800/50 bg-white/50 p-1 not-disabled:shadow hover:bg-sky-200/50 focus:bg-sky-200/50 disabled:cursor-not-allowed disabled:bg-gray-500/25;
+    @apply w-full rounded-md border border-sky-800/50 bg-white/50 p-1 not-disabled:shadow hover:bg-sky-200/50 focus:bg-sky-200/50 disabled:cursor-not-allowed disabled:bg-gray-500/25;
 }
 
 input[type='number']::-webkit-inner-spin-button {

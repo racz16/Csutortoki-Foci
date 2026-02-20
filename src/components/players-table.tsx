@@ -133,28 +133,26 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
                     )}
                     {pagedPlayers.map((p) => (
                         <tr key={p.id} className="glass-nested">
-                            <td className="rounded-s-md border-1 border-e-0 border-white/25">
+                            <td className="rounded-s-md border border-e-0 border-white/25">
                                 <div className="m-auto p-1 sm:p-2">
                                     <Link className="link" href={`/players/${p.id}`}>
                                         {p.name}
                                     </Link>
                                 </div>
                             </td>
-                            <td className="hidden border-y-1 border-white/25 sm:table-cell">
+                            <td className="hidden border-y border-white/25 sm:table-cell">
                                 <div className="m-auto w-10 p-1 text-right sm:p-2">{p.matchCount}</div>
                             </td>
-                            <td className="hidden border-y-1 border-white/25 sm:table-cell">
+                            <td className="hidden border-y border-white/25 sm:table-cell">
                                 <div className="m-auto w-14 p-1 text-right sm:p-2">{p.matchRatio.toFixed()}%</div>
                             </td>
-                            <td
-                                className={`border-white/25 ${admin ? 'border-y-1' : 'rounded-e-md border-1 border-s-0'}`}
-                            >
+                            <td className={`border-white/25 ${admin ? 'border-y' : 'rounded-e-md border border-s-0'}`}>
                                 <div className="m-auto w-14 p-1 text-right sm:p-2">
                                     {formatNumberMinMaxDigits(p.rating, 2)}
                                 </div>
                             </td>
                             {admin && (
-                                <td className="rounded-e-md border-1 border-s-0 border-white/25">
+                                <td className="rounded-e-md border border-s-0 border-white/25">
                                     <div className="flex justify-center gap-2">
                                         <EditPlayerButton id={p.id} name={p.name} regular={p.regular} />
                                         <DeletePlayerButton id={p.id} name={p.name} matchCount={p.matchCount} />

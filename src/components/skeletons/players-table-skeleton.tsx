@@ -39,28 +39,28 @@ export function PlayersTableSkeleton(): JSX.Element {
                 <tbody>
                     {playerPlaceholders.map((p) => (
                         <tr className="glass-nested" key={p.id}>
-                            <td className="rounded-s-md border-1 border-e-0 border-white/25">
+                            <td className="rounded-s-md border border-e-0 border-white/25">
                                 <div className="flex h-8 items-center p-1 sm:h-10 sm:p-2">
                                     <div
                                         className={`h-4 animate-pulse rounded bg-gray-500/50 ${p.nameClassName}`}
                                     ></div>
                                 </div>
                             </td>
-                            <td className="hidden border-y-1 border-white/25 sm:table-cell">
+                            <td className="hidden border-y border-white/25 sm:table-cell">
                                 <div className="flex h-8 items-center justify-center p-1 sm:h-10 sm:p-2">
                                     <div
                                         className={`h-4 animate-pulse rounded bg-gray-500/50 ${p.matchCountClassName}`}
                                     ></div>
                                 </div>
                             </td>
-                            <td className="hidden border-y-1 border-white/25 sm:table-cell">
+                            <td className="hidden border-y border-white/25 sm:table-cell">
                                 <div className="flex h-8 items-center justify-center p-1 sm:h-10 sm:p-2">
                                     <div
                                         className={`h-4 animate-pulse rounded bg-gray-500/50 ${p.matchRatioClassName}`}
                                     ></div>
                                 </div>
                             </td>
-                            <td className="rounded-e-md border-1 border-s-0 border-white/25">
+                            <td className="rounded-e-md border border-s-0 border-white/25">
                                 <div className="flex h-8 items-center justify-center p-1 sm:h-10 sm:p-2">
                                     <div
                                         className={`h-4 animate-pulse rounded bg-gray-500/50 ${p.ordinalClassName}`}

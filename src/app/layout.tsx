@@ -31,7 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
                 <SessionProvider>
                     <DialogProvider>
                         <Navbar />
-                        <main id="main-content" className="flex grow-1 justify-center focus:outline-0" tabIndex={-1}>
+                        <main id="main-content" className="flex grow justify-center focus:outline-0" tabIndex={-1}>
                             <div className="m-2 mt-4 w-full sm:m-2 sm:mt-4 lg:w-5xl">{children}</div>
                         </main>
                     </DialogProvider>

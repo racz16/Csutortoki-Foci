@@ -20,7 +20,7 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                 </div>
                 <div className="flex items-center">
                     <div
-                        className={`${chivoMonoFont.className} order-2 flex grow-1 text-4xl`}
+                        className={`${chivoMonoFont.className} order-2 flex grow text-4xl`}
                         aria-label={`Eredmény: ${match.team[0].score}-${match.team[1].score}`}
                     >
                         <span className="w-1/2 text-right" aria-hidden>

@@ -17,7 +17,7 @@ export function Navbar(): JSX.Element {
     return (
         <header className="glass-navbar sticky top-0 z-1 flex flex-col justify-center p-2 sm:flex-row">
             <Link
-                className="absolute bottom-100 self-center rounded-lg border-1 bg-white p-2 focus:-bottom-12 sm:focus:-bottom-14"
+                className="absolute bottom-100 self-center rounded-lg border bg-white p-2 focus:-bottom-12 sm:focus:-bottom-14"
                 href="#main-content"
             >
                 Ugrás a tartalomhoz
