@@ -11,27 +11,24 @@ export function RandomPlayerCard({ playerStatistics }: { playerStatistics: Playe
     return (
         <Card className="h-full">
             <div className="flex h-full grow flex-col gap-1 sm:gap-2">
-                <div className="flex justify-between">
-                    <h3 className="order-2 text-center text-lg">
+                <div className="flex items-start justify-between">
+                    <EditPlayerButton
+                        id={playerStatistics.id}
+                        name={playerStatistics.name}
+                        regular={playerStatistics.regular}
+                    />
+                    <h3 className="text-center text-lg">
                         <Link href={`/players/${playerStatistics.id}`} className="link">
                             {playerStatistics.name}
                         </Link>
                     </h3>
-                    <div className="order-1">
-                        <EditPlayerButton
-                            id={playerStatistics.id}
-                            name={playerStatistics.name}
-                            regular={playerStatistics.regular}
-                        />
-                    </div>
-                    <div className="order-3">
-                        <DeletePlayerButton
-                            id={playerStatistics.id}
-                            name={playerStatistics.name}
-                            matchCount={playerStatistics.matchCount}
-                        />
-                    </div>
+                    <DeletePlayerButton
+                        id={playerStatistics.id}
+                        name={playerStatistics.name}
+                        matchCount={playerStatistics.matchCount}
+                    />
                 </div>
+
                 <div className="flex grow gap-1 sm:gap-2">
                     <div className="glass-nested hidden aspect-9/16 h-full items-center justify-center rounded-lg lg:flex">
                         <UserCircleIcon size={64} weight="thin" alt="" />

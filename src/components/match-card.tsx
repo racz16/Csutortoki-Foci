@@ -46,43 +46,93 @@ export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: num
                             <div key={i} className="sr-only">
                                 {i === 0 ? 1 : 2}. csapat
                             </div>
-                            {t.teamPlayer.map((p) => (
-                                <div
-                                    className={`flex items-center justify-between rounded-md p-1 ${i === 0 ? 'col-1' : 'col-2'} ${p.playerId === playerId ? 'glass-selected' : 'glass-nested'}`}
-                                    key={p.playerId}
-                                >
-                                    <Link
-                                        href={`/players/${p.playerId}`}
-                                        className={`link ${i === 0 ? 'order-2 text-right' : 'order-1'} ${p.playerId === playerId ? 'font-bold' : ''}`}
-                                    >
-                                        {p.name}
-                                    </Link>
-                                    <div
-                                        className={`flex items-center gap-1 ${i === 0 ? 'order-1 flex-wrap' : 'order-2 flex-wrap-reverse justify-end'}`}
-                                    >
-                                        <div
-                                            className={`w-8 rounded-sm bg-sky-900/50 text-center text-sm text-white ${i === 0 ? 'order-1' : 'order-2'}`}
-                                            aria-label={`Pontszám a meccs előtt: ${formatNumberMinMaxDigits(p.beforeRating, 1)}`}
-                                        >
-                                            <div aria-hidden>{formatNumberMinMaxDigits(p.beforeRating, 1)}</div>
-                                        </div>
-                                        <div
-                                            className={`w-8 rounded-sm text-center text-sm text-white ${i === 0 ? 'order-2' : 'order-1'} ${p.beforeRating === p.afterRating ? 'bg-yellow-900/50' : p.beforeRating > p.afterRating ? 'bg-red-900/50' : 'bg-green-900/50'}`}
-                                            aria-label={`Pontszám a meccs után: ${formatNumberMinMaxDigits(p.afterRating, 1)}`}
-                                        >
-                                            <div aria-hidden>{formatNumberMinMaxDigits(p.afterRating, 1)}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                            {i === 0
+                                ? t.teamPlayer.map((p) => (
+                                      <div
+                                          className={`col-1 flex items-center justify-between rounded-md p-1 ${p.playerId === playerId ? 'glass-selected' : 'glass-nested'}`}
+                                          key={p.playerId}
+                                      >
+                                          <div className="flex flex-wrap items-center gap-1">
+                                              <div
+                                                  className="w-8 rounded-sm bg-sky-900/50 text-center text-sm text-white"
+                                                  aria-hidden
+                                              >
+                                                  {formatNumberMinMaxDigits(p.beforeRating, 1)}
+                                              </div>
+                                              <div
+                                                  className={`w-8 rounded-sm text-center text-sm text-white ${p.beforeRating === p.afterRating ? 'bg-yellow-900/50' : p.beforeRating > p.afterRating ? 'bg-red-900/50' : 'bg-green-900/50'}`}
+                                                  aria-hidden
+                                              >
+                                                  {formatNumberMinMaxDigits(p.afterRating, 1)}
+                                              </div>
+                                          </div>
+                                          <Link
+                                              href={`/players/${p.playerId}`}
+                                              className={`link text-right ${p.playerId === playerId ? 'font-bold' : ''}`}
+                                          >
+                                              {p.name}
+                                          </Link>
+                                          <div className="sr-only">
+                                              Pontszám a meccs előtt: {formatNumberMinMaxDigits(p.beforeRating, 1)}
+                                          </div>
+                                          <div className="sr-only">
+                                              Pontszám a meccs után: {formatNumberMinMaxDigits(p.afterRating, 1)}
+                                          </div>
+                                      </div>
+                                  ))
+                                : t.teamPlayer.map((p) => (
+                                      <div
+                                          className={`col-2 flex items-center justify-between rounded-md p-1 ${p.playerId === playerId ? 'glass-selected' : 'glass-nested'}`}
+                                          key={p.playerId}
+                                      >
+                                          <Link
+                                              href={`/players/${p.playerId}`}
+                                              className={`link ${p.playerId === playerId ? 'font-bold' : ''}`}
+                                          >
+                                              {p.name}
+                                          </Link>
+                                          <div className="flex flex-wrap-reverse items-center justify-end gap-1">
+                                              <div
+                                                  className={`w-8 rounded-sm text-center text-sm text-white ${p.beforeRating === p.afterRating ? 'bg-yellow-900/50' : p.beforeRating > p.afterRating ? 'bg-red-900/50' : 'bg-green-900/50'}`}
+                                                  aria-hidden
+                                              >
+                                                  {formatNumberMinMaxDigits(p.afterRating, 1)}
+                                              </div>
+                                              <div
+                                                  className="w-8 rounded-sm bg-sky-900/50 text-center text-sm text-white"
+                                                  aria-hidden
+                                              >
+                                                  {formatNumberMinMaxDigits(p.beforeRating, 1)}
+                                              </div>
+                                          </div>
+                                          <div className="sr-only">
+                                              Pontszám a meccs előtt: {formatNumberMinMaxDigits(p.beforeRating, 1)}
+                                          </div>
+                                          <div className="sr-only">
+                                              Pontszám a meccs után: {formatNumberMinMaxDigits(p.afterRating, 1)}
+                                          </div>
+                                      </div>
+                                  ))}
                         </Fragment>
                     ))}
                 </div>
             </div>
             <div className="flex items-center justify-around">
-                <div className="order-2 px-2 text-sm">Esélyek</div>
-                <div className="order-1 w-1/2 text-center text-xl">{(match.team[0].chance * 100).toFixed()}%</div>
-                <div className="order-3 w-1/2 text-center text-xl">{(match.team[1].chance * 100).toFixed()}%</div>
+                <div
+                    className="w-1/2 text-center text-xl"
+                    aria-label={`1. csapat esélye: ${(match.team[0].chance * 100).toFixed()}%`}
+                >
+                    <div aria-hidden>{(match.team[0].chance * 100).toFixed()}%</div>
+                </div>
+                <div className="px-2 text-sm" aria-hidden>
+                    Esélyek
+                </div>
+                <div
+                    className="w-1/2 text-center text-xl"
+                    aria-label={`2. csapat esélye: ${(match.team[1].chance * 100).toFixed()}%`}
+                >
+                    <div aria-hidden>{(match.team[1].chance * 100).toFixed()}%</div>
+                </div>
             </div>
         </Card>
     );
