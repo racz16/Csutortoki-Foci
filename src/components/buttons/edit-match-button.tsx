@@ -18,7 +18,7 @@ export function EditMatchButton({ match }: { match: MatchDto }): JSX.Element {
         <button
             onClick={() => open(MatchDialog, { match }, 'large')}
             className="interactivity interactivity-normal"
-            aria-label="Szerkesztés"
+            aria-label="Meccs szerkesztése"
         >
             <PencilIcon />
         </button>

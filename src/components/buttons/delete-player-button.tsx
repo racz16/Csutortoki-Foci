@@ -29,7 +29,7 @@ export function DeletePlayerButton({
             className="interactivity interactivity-danger"
             disabled={matchCount > 0}
             title={matchCount > 0 ? 'Csak a meccs nélküli játékosok törölhetők' : undefined}
-            aria-label="Törlés"
+            aria-label={`${name} törlése`}
         >
             <TrashIcon />
         </button>

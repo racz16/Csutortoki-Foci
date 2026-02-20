@@ -17,7 +17,7 @@ export function NewPlayerButton(): JSX.Element {
         <button
             onClick={() => open(PlayerDialog, {}, 'small')}
             className="interactivity interactivity-normal"
-            aria-label="Létrehozás"
+            aria-label="Játékos létrehozása"
         >
             <PlusIcon weight="bold" />
         </button>

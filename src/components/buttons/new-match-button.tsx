@@ -17,7 +17,7 @@ export function NewMatchButton({ playerCount }: { playerCount: number }): JSX.El
             className="interactivity interactivity-normal"
             disabled={playerCount < 2}
             title={playerCount < 2 ? 'Egy meccshez kell legalább 2 játékos' : undefined}
-            aria-label={admin ? 'Létrehozás' : 'Meccs tervező'}
+            aria-label={admin ? 'Meccs létrehozása' : 'Meccs tervezése'}
         >
             {admin ? <PlusIcon weight="bold" /> : <StrategyIcon weight="bold" />}
         </button>

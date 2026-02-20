@@ -17,7 +17,7 @@ export function EditPlayerButton({ id, name, regular }: { id: number; name: stri
         <button
             onClick={() => open(PlayerDialog, { id, name, regular }, 'small')}
             className="interactivity interactivity-normal"
-            aria-label="Szerkesztés"
+            aria-label={`${name} szerkesztése`}
         >
             <PencilIcon />
         </button>

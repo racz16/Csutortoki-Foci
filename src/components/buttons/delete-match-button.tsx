@@ -17,7 +17,7 @@ export function DeleteMatchButton({ id }: { id: number }): JSX.Element {
         <button
             onClick={() => open(DeleteMatchDialog, { id }, 'small')}
             className="interactivity interactivity-danger"
-            aria-label="Törlés"
+            aria-label="Meccs törlése"
         >
             <TrashIcon />
         </button>
