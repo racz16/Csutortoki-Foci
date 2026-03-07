@@ -8,7 +8,7 @@ import { formatDateTimeToDateTimeLocal, formatNumberMinMaxDigits, getTimeZoneOff
 import { CaretLeftIcon, CaretRightIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { Team, predictWin, rating } from 'openskill';
+import { Team, predictDraw, predictWin, rating } from 'openskill';
 import { useActionState, useEffect, useState } from 'react';
 import { useDialog } from './dialog-provider';
 
@@ -162,7 +162,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
         }
     }
 
-    async function changeDate(e: React.FocusEvent<HTMLInputElement, Element>) {
+    async function changeDate(e: React.FocusEvent<HTMLInputElement, Element>): Promise<void> {
         setLoading(true);
         const params = new URLSearchParams();
         params.append('date', e.target.value);
@@ -171,6 +171,14 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
         setPlayers((x) => [...x.map((p) => playersJson.find((z) => z.id === p.id) ?? { ...p })]);
         setTeams((x) => [...x.map((t) => t.map((p) => playersJson.find((z) => z.id === p.id) ?? { ...p }))]);
         setLoading(false);
+    }
+
+    function splitPlayers(): void {
+        const selectedPlayers = [...teams[0], ...teams[1]].sort((a, b) => a.id - b.id);
+        const splitPlayers = computeBestSplit(selectedPlayers);
+        if (splitPlayers) {
+            setTeams(splitPlayers);
+        }
     }
 
     const predictions = computePredictions(teams);
@@ -488,8 +496,8 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
                     </div>
                 ))}
 
-            {admin && (
-                <div className="flex justify-center gap-2">
+            <div className="flex justify-center gap-2">
+                {admin && (
                     <button
                         type="submit"
                         disabled={isPending || loading}
@@ -497,11 +505,24 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
                     >
                         Mentés
                     </button>
-                    <button type="button" onClick={close} className="interactivity interactivity-normal">
-                        Mégse
-                    </button>
-                </div>
-            )}
+                )}
+                <button
+                    type="button"
+                    onClick={splitPlayers}
+                    disabled={isPending || loading || teams[0].length + teams[1].length < 2}
+                    title={
+                        teams[0].length + teams[1].length < 2
+                            ? 'Legalább két játékosnak kell részt vennie a meccsen'
+                            : undefined
+                    }
+                    className="interactivity interactivity-normal"
+                >
+                    Elosztás
+                </button>
+                <button type="button" onClick={close} className="interactivity interactivity-normal">
+                    Mégse
+                </button>
+            </div>
         </form>
     );
 }
@@ -517,4 +538,59 @@ function computePredictions(teams: PlayerDto[][]): number[] {
         osTeams.push(osTeam);
     }
     return predictWin(osTeams);
+}
+
+function computeBestSplit(players: PlayerDto[]): [PlayerDto[], PlayerDto[]] | null {
+    const playerCount = players.length;
+    if (playerCount < 2) {
+        return null;
+    }
+
+    let bestProbability = -1;
+    let bestTeamA: PlayerDto[] = [];
+    let bestTeamB: PlayerDto[] = [];
+    const teamASize = Math.floor(playerCount / 2);
+    const teamBSize = playerCount - teamASize;
+    const indices = Array.from({ length: teamASize }, (_, i) => i);
+    const currentTeamA = new Array<PlayerDto>(teamASize);
+    const currentTeamB = new Array<PlayerDto>(teamBSize);
+
+    while (true) {
+        for (let i = 0; i < teamASize; i++) {
+            currentTeamA[i] = players[indices[i]];
+        }
+
+        let teamAIndex = 0;
+        let teamBIndex = 0;
+        for (let i = 0; i < playerCount; i++) {
+            if (teamAIndex < teamASize && i === indices[teamAIndex]) {
+                teamAIndex++;
+            } else {
+                currentTeamB[teamBIndex++] = players[i];
+            }
+        }
+
+        if (playerCount % 2 === 1 || currentTeamA[0].id < currentTeamB[0].id) {
+            const probability = predictDraw([currentTeamA, currentTeamB]);
+            if (probability > bestProbability) {
+                bestProbability = probability;
+                bestTeamA = currentTeamA.slice();
+                bestTeamB = currentTeamB.slice();
+            }
+        }
+
+        let i = teamASize - 1;
+        while (i >= 0 && indices[i] === playerCount - teamASize + i) {
+            i--;
+        }
+        if (i < 0) {
+            break;
+        }
+        indices[i]++;
+        for (let j = i + 1; j < teamASize; j++) {
+            indices[j] = indices[j - 1] + 1;
+        }
+    }
+
+    return [bestTeamA, bestTeamB];
 }
