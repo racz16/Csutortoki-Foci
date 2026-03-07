@@ -1,12 +1,6 @@
 'use client';
 
-import {
-    DiscordLogoIcon,
-    GithubLogoIcon,
-    GoogleLogoIcon,
-    RedditLogoIcon,
-    SquaresFourIcon,
-} from '@phosphor-icons/react';
+import { DiscordLogoIcon, GithubLogoIcon, GoogleLogoIcon, SquaresFourIcon } from '@phosphor-icons/react';
 import { OAuthProviderType } from 'next-auth/providers/oauth-types';
 import { signIn, useSession } from 'next-auth/react';
 import { redirect, useSearchParams } from 'next/navigation';
@@ -45,13 +39,6 @@ export function SignInButtons(): JSX.Element | JSX.Element[] {
             icon: <SquaresFourIcon weight="fill" />,
             classes: 'bg-[#00A4EF] text-white',
             hoverClasses: 'hover:bg-white hover:text-[#00A4EF]',
-        },
-        {
-            providerId: 'reddit',
-            name: 'Reddit',
-            icon: <RedditLogoIcon weight="fill" />,
-            classes: 'bg-[#FF4500] text-white',
-            hoverClasses: 'hover:bg-white hover:text-[#FF4500]',
         },
         {
             providerId: 'discord',

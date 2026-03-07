@@ -3,7 +3,6 @@ import AzureAdProvider from 'next-auth/providers/azure-ad';
 import DiscordProvider from 'next-auth/providers/discord';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
-import RedditProvider from 'next-auth/providers/reddit';
 import prismaClient from './prisma';
 
 export const authOptions: AuthOptions = {
@@ -16,10 +15,6 @@ export const authOptions: AuthOptions = {
             clientId: process.env.AZURE_AD_CLIENT_ID!,
             clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
             tenantId: process.env.AZURE_AD_TENANT_ID!,
-        }),
-        RedditProvider({
-            clientId: process.env.REDDIT_CLIENT_ID!,
-            clientSecret: process.env.REDDIT_CLIENT_SECRET!,
         }),
         DiscordProvider({
             clientId: process.env.DISCORD_CLIENT_ID!,
@@ -41,9 +36,6 @@ export const authOptions: AuthOptions = {
             return { ...session, admin };
         },
         async jwt({ token, profile, account }) {
-            if (account?.provider === 'reddit' && !token.picture && profile?.icon_img) {
-                token.picture = profile.icon_img;
-            }
             if (account?.provider && !token.provider) {
                 token.provider = getProviderName(account.provider);
             }
@@ -58,8 +50,6 @@ function getProviderName(providerId: string): string {
             return 'Google';
         case 'azure-ad':
             return 'Microsoft';
-        case 'reddit':
-            return 'Reddit';
         case 'discord':
             return 'Discord';
         case 'github':
