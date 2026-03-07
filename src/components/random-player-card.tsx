@@ -17,7 +17,7 @@ export function RandomPlayerCard({ playerStatistics }: { playerStatistics: Playe
                         name={playerStatistics.name}
                         regular={playerStatistics.regular}
                     />
-                    <h3 className="text-center text-lg">
+                    <h3 className="grow text-center text-lg">
                         <Link href={`/players/${playerStatistics.id}`} className="link">
                             {playerStatistics.name}
                         </Link>
