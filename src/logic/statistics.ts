@@ -6,6 +6,7 @@ import {
     formatNumberMinMaxDigits,
     preventPrerenderingInCiPipeline,
 } from '@/utility';
+import { redirect } from 'next/navigation';
 import { ordinal } from 'openskill';
 import prismaClient, { TPrismaClient } from './prisma';
 
@@ -115,11 +116,14 @@ export async function getRandomPlayerStatistics(): Promise<PlayerStatisticsDto |
 
 export async function getPlayerStatistics(playerId: number): Promise<PlayerStatisticsDto> {
     await preventPrerenderingInCiPipeline();
-    const player = await prismaClient.player.findFirstOrThrow({
+    const player = await prismaClient.player.findFirst({
         where: { id: playerId },
         include: { _count: { select: { teamPlayer: {} } } },
         omit: { mu: true, sigma: true, id: true },
     });
+    if (!player) {
+        redirect('/not-found');
+    }
     const playerStatistics = await prismaClient.playerStatistic.findMany({
         where: { playerId },
         orderBy: { index: 'asc' },
