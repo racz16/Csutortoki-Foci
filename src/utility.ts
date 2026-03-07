@@ -1,4 +1,5 @@
 import { SessionContextValue } from 'next-auth/react';
+import { Chivo_Mono } from 'next/font/google';
 import { connection } from 'next/server';
 
 export async function Wait(timeout = 1000): Promise<void> {
@@ -83,3 +84,5 @@ export function isAdmin(session: SessionContextValue): boolean {
 }
 
 export class ValidationError extends Error {}
+
+export const chivoMonoFont = Chivo_Mono({ weight: '400', subsets: ['latin'] });

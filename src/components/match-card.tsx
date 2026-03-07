@@ -1,13 +1,10 @@
 import { MatchDto } from '@/dtos/match-dto';
-import { formatDateTime, formatNumberMinMaxDigits } from '@/utility';
-import { Chivo_Mono } from 'next/font/google';
+import { chivoMonoFont, formatDateTime, formatNumberMinMaxDigits } from '@/utility';
 import Link from 'next/link';
 import { Fragment, JSX } from 'react';
 import { DeleteMatchButton } from './buttons/delete-match-button';
 import { EditMatchButton } from './buttons/edit-match-button';
 import { Card } from './card';
-
-export const chivoMonoFont = Chivo_Mono({ weight: '400', subsets: ['latin'] });
 
 export function MatchCard({ match, playerId }: { match: MatchDto; playerId?: number }): JSX.Element {
     const date = new Date(match.date);

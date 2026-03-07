@@ -32,6 +32,7 @@
     "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
         "@prisma/client": "^6.17.1",
+        "echarts-for-react": "^3.0.6",
         "next": "^16.1.6",
         "next-auth": "^4.24.13",
         "openskill": "^4.1.0",

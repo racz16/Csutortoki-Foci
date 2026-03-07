@@ -1,3 +1,4 @@
+import { PlayerDevelopmentDto } from '@/dtos/player-development-dto';
 import { PlayerDto } from '@/dtos/player-dto';
 import { PlayerListDto } from '@/dtos/player-list-dto';
 import { PlayerStateDto } from '@/dtos/player-state-dto';
@@ -277,4 +278,53 @@ async function deletePlayerDatabase(player: DeletePlayerDto, dbPlayer: DeletePla
 function deletePlayerCache(player: DeletePlayerDto): void {
     revalidatePath('/players');
     revalidatePath(`/players/${player.id}`);
+}
+
+export async function getPlayerDevelopment(playerId: number): Promise<PlayerDevelopmentDto[]> {
+    await preventPrerenderingInCiPipeline();
+
+    const results = await prismaClient.match.findMany({
+        orderBy: { date: 'asc' },
+        include: {
+            team: {
+                include: {
+                    teamPlayer: {
+                        where: { playerId },
+                        omit: {
+                            id: true,
+                            beforeMu: true,
+                            beforeSigma: true,
+                            playerId: true,
+                            teamId: true,
+                            weight: true,
+                        },
+                    },
+                },
+                omit: { id: true, matchId: true },
+            },
+        },
+        where: { team: { some: { teamPlayer: { some: { playerId } } } } },
+        omit: { id: true, locationId: true },
+    });
+
+    if (!results.length) {
+        return [];
+    }
+
+    const oenDayInMs = 1000 * 60 * 60 * 24;
+    return [
+        { mu: DEFAULT_MU, sigma: DEFAULT_SIGMA, date: new Date(results[0].date.getTime() - oenDayInMs) },
+        ...results.map((x) => {
+            const teamIndex = x.team[0].teamPlayer.length ? 0 : 1;
+            const teamPlayer = x.team[teamIndex].teamPlayer[0];
+            return {
+                date: x.date,
+                score1: x.team[0].score,
+                score2: x.team[1].score,
+                result: Math.sign(x.team[teamIndex].score - x.team[1 - teamIndex].score),
+                mu: teamPlayer.afterMu,
+                sigma: teamPlayer.afterSigma,
+            };
+        }),
+    ];
 }

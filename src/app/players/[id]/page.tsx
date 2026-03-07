@@ -2,10 +2,13 @@ import { DeletePlayerButton } from '@/components/buttons/delete-player-button';
 import { EditPlayerButton } from '@/components/buttons/edit-player-button';
 import { Card } from '@/components/card';
 import { Matches } from '@/components/matches';
+import { PlayerChart } from '@/components/player-chart';
 import { MatchesSkeleton } from '@/components/skeletons/matches-skeleton';
+import { PlayerChartSkeleton } from '@/components/skeletons/player-chart-skeleton';
 import { PlayerStatisticsSkeleton } from '@/components/skeletons/player-statistics-skeleton';
 import { StatisticCard } from '@/components/statistic-card';
 import { getMatches } from '@/logic/matches';
+import { getPlayerDevelopment } from '@/logic/players';
 import prismaClient from '@/logic/prisma';
 import { getPlayerStatistics } from '@/logic/statistics';
 import { UserCircleIcon } from '@phosphor-icons/react/dist/ssr';
@@ -26,6 +29,14 @@ export default async function PlayerPage({ params }: { params: Promise<{ id: str
             <Suspense fallback={<PlayerStatisticsSkeleton />}>
                 <PlayerStatisticsLazy playerId={playerId} />
             </Suspense>
+
+            <section className="flex flex-col gap-2 sm:gap-4">
+                <h3 className="text-bg mt-1 text-lg sm:mt-2">Pontszám</h3>
+                <Suspense fallback={<PlayerChartSkeleton />}>
+                    <PlayerChartLazy playerId={playerId} />
+                </Suspense>
+            </section>
+
             <section className="flex flex-col gap-2 sm:gap-4">
                 <h3 className="text-bg mt-1 text-lg sm:mt-2">Meccsek</h3>
                 <Suspense fallback={<MatchesSkeleton />}>
@@ -89,6 +100,11 @@ async function PlayerStatisticsLazy({ playerId }: { playerId: number }): Promise
                 ))}
         </>
     );
+}
+
+async function PlayerChartLazy({ playerId }: { playerId: number }): Promise<JSX.Element> {
+    const development = await getPlayerDevelopment(playerId);
+    return <PlayerChart development={development} />;
 }
 
 async function MatchesLazy({ playerId }: { playerId: number }): Promise<JSX.Element> {
