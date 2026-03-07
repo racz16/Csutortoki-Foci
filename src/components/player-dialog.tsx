@@ -1,6 +1,7 @@
 'use client';
 
 import { createPlayerEndpoint, editPlayerEndpoint } from '@/actions';
+import { PlayerStateDto } from '@/dtos/player-state-dto';
 import { XIcon } from '@phosphor-icons/react';
 import { JSX, useActionState, useEffect, useState } from 'react';
 import { useDialog } from './dialog-provider';
@@ -22,7 +23,11 @@ export function PlayerDialog({
         successful: false,
         state: id ? { id, name, regular } : undefined,
     });
-    const [dirtyFields, setDirtyFields] = useState<Set<PlayerKey>>(new Set());
+    const [dirtyFields, setDirtyFields] = useState<{ forState: PlayerStateDto; fields: Set<PlayerKey> }>({
+        forState: state,
+        fields: new Set(),
+    });
+    const activeDirtyFields = dirtyFields.forState === state ? dirtyFields.fields : new Set<PlayerKey>();
 
     useEffect(() => {
         if (state.successful) {
@@ -30,12 +35,11 @@ export function PlayerDialog({
         }
     }, [close, state]);
 
-    useEffect(() => {
-        setDirtyFields(new Set());
-    }, [state]);
-
     function setDirty(key: PlayerKey): void {
-        setDirtyFields((prev) => new Set(prev).add(key));
+        setDirtyFields((prev) => ({
+            forState: state,
+            fields: new Set(prev.forState === state ? prev.fields : []).add(key),
+        }));
     }
 
     return (
@@ -71,7 +75,7 @@ export function PlayerDialog({
                     </label>
                     <div id="name-error" aria-live="polite" aria-atomic>
                         {state.errors?.name &&
-                            !dirtyFields.has('name') &&
+                            !activeDirtyFields.has('name') &&
                             state.errors.name.map((error) => (
                                 <p className="py-1 text-xs text-red-800" key={error}>
                                     {error}
@@ -94,7 +98,7 @@ export function PlayerDialog({
                     </label>
                     <div id="regular-error" aria-live="polite" aria-atomic>
                         {state.errors?.regular &&
-                            !dirtyFields.has('regular') &&
+                            !activeDirtyFields.has('regular') &&
                             state.errors.regular.map((error) => (
                                 <p className="py-1 text-xs text-red-800" key={error}>
                                     {error}
@@ -102,7 +106,7 @@ export function PlayerDialog({
                             ))}
                     </div>
                 </div>
-                {!dirtyFields.size &&
+                {!activeDirtyFields.size &&
                     state.globalErrors?.map((error) => (
                         <div className="text-red-800" key={error}>
                             {error}

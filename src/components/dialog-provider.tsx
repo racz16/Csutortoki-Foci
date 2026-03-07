@@ -1,14 +1,23 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { ComponentType, createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import {
+    ComponentType,
+    createContext,
+    ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
 interface DialogState {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Component: ComponentType<any>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     props: any;
     size: 'small' | 'large';
+    pathname: string;
 }
 
 interface DialogContextType {
@@ -30,32 +39,30 @@ export default function DialogProvider({ children }: { children: ReactNode }) {
     const dialogRef = useRef<HTMLDialogElement>(null);
     const [state, setState] = useState<DialogState | null>(null);
     const pathname = usePathname();
-    const prevPathnameRef = useRef(pathname);
 
-    function open<T>(Component: ComponentType<T>, props: T, size: 'small' | 'large') {
-        setState({ Component, props, size });
-    }
+    const isOpen = state !== null && state.pathname === pathname;
 
-    function close() {
+    useEffect(() => {
+        if (isOpen) {
+            dialogRef.current?.showModal();
+        } else {
+            dialogRef.current?.close();
+        }
+    }, [isOpen]);
+
+    const close = useCallback(() => {
         dialogRef.current?.close();
         setState(null);
-    }
+    }, []);
 
-    useEffect(() => {
-        if (state) {
-            dialogRef.current?.showModal();
-        }
-    }, [state]);
+    const open = useCallback(<T,>(Component: ComponentType<T>, props: T, size: 'small' | 'large') => {
+        setState({ Component, props, size, pathname: window.location.pathname });
+    }, []);
 
-    useEffect(() => {
-        if (prevPathnameRef.current !== pathname) {
-            prevPathnameRef.current = pathname;
-            close();
-        }
-    }, [pathname]);
+    const contextValue = useMemo(() => ({ open, close }), [open, close]);
 
     return (
-        <DialogContext.Provider value={{ open, close }}>
+        <DialogContext.Provider value={contextValue}>
             {children}
 
             <dialog

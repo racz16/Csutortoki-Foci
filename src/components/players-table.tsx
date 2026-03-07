@@ -23,6 +23,7 @@ export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Ele
     const admin = isAdmin(session);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPageSize(getInitialPageSize());
         setHideNonRegulars(getInitialHideNonRegulars());
     }, []);
