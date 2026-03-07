@@ -139,6 +139,7 @@ async function createPlayerDatabase(player: CreatePlayerDto): Promise<number> {
 }
 
 function createPlayerCache(id: number): void {
+    revalidatePath('/matches');
     revalidatePath('/players');
     revalidatePath(`/players/${id}`);
 }
@@ -276,6 +277,7 @@ async function deletePlayerDatabase(player: DeletePlayerDto, dbPlayer: DeletePla
 }
 
 function deletePlayerCache(player: DeletePlayerDto): void {
+    revalidatePath('/matches');
     revalidatePath('/players');
     revalidatePath(`/players/${player.id}`);
 }
