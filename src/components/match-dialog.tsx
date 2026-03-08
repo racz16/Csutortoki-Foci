@@ -163,14 +163,12 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
     }
 
     async function changeDate(e: React.FocusEvent<HTMLInputElement, Element>): Promise<void> {
-        setLoading(true);
         const params = new URLSearchParams();
         params.append('date', e.target.value);
         const playersResponse = await fetch(`/api/players?${params}`);
         const playersJson: PlayerDto[] = await playersResponse.json();
         setPlayers((x) => [...x.map((p) => playersJson.find((z) => z.id === p.id) ?? { ...p })]);
         setTeams((x) => [...x.map((t) => t.map((p) => playersJson.find((z) => z.id === p.id) ?? { ...p }))]);
-        setLoading(false);
     }
 
     function splitPlayers(): void {
