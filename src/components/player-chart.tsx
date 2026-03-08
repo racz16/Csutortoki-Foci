@@ -1,9 +1,10 @@
 'use client';
 
 import { PlayerDevelopmentDto } from '@/dtos/player-development-dto';
-import { chivoMonoFont, formatDateTime, formatNumberMinMaxDigits } from '@/utility';
+import { chivoMonoFont, formatDateTime, formatNumberMaxDigits, formatNumberMinMaxDigits } from '@/utility';
 import { ArrowRightIcon } from '@phosphor-icons/react';
 import {
+    AriaComponentOption,
     ComposeOption,
     DataZoomComponentOption,
     GridComponentOption,
@@ -15,6 +16,7 @@ import {
 import ReactEChartsCore from 'echarts-for-react/lib/core';
 import { LineChart } from 'echarts/charts';
 import {
+    AriaComponent,
     DataZoomComponent,
     GridComponent,
     MarkPointComponent,
@@ -25,7 +27,6 @@ import * as echarts from 'echarts/core';
 import hu from 'echarts/i18n/langHU-obj';
 import { CanvasRenderer } from 'echarts/renderers';
 import { CallbackDataParams } from 'echarts/types/dist/shared';
-import { ordinal } from 'openskill';
 import { JSX } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Card } from './card';
@@ -43,6 +44,7 @@ export function PlayerChart({ development }: { development: PlayerDevelopmentDto
         MarkPointComponent,
         DataZoomComponent,
         ToolboxComponent,
+        AriaComponent,
     ]);
     echarts.registerLocale('HU', hu);
 
@@ -53,9 +55,21 @@ export function PlayerChart({ development }: { development: PlayerDevelopmentDto
         | DataZoomComponentOption
         | ToolboxComponentOption
         | LineSeriesOption
+        | AriaComponentOption
     >;
 
+    const ratings = development.map((x) => x.rating);
+    const minRating = formatNumberMaxDigits(Math.min(...ratings), 2);
+    const maxRating = formatNumberMaxDigits(Math.max(...ratings), 2);
+    const lastRating = formatNumberMaxDigits(ratings[ratings.length - 1], 2);
+
     const option: EChartsOption = {
+        aria: {
+            enabled: true,
+            label: {
+                description: `Vonaldiagram a játékos pontszámának változásáról. A legkisebb érték ${minRating}, a legnagyobb ${maxRating}, a jelenlegi ${lastRating}.`,
+            },
+        },
         toolbox: {
             feature: {
                 restore: {
@@ -96,9 +110,6 @@ export function PlayerChart({ development }: { development: PlayerDevelopmentDto
                     return '';
                 }
 
-                const beforeRating = ordinal(previousMatch);
-                const afterRating = ordinal(match);
-
                 const result = (
                     <div className="flex flex-col gap-2 p-2">
                         {match.date && <div className="text-center text-sm">{formatDateTime(match.date)}</div>}
@@ -110,13 +121,13 @@ export function PlayerChart({ development }: { development: PlayerDevelopmentDto
 
                         <div className="flex items-center justify-between">
                             <div className="w-10 rounded-sm bg-sky-900/50 text-center text-sm text-white">
-                                {formatNumberMinMaxDigits(beforeRating, 1)}
+                                {formatNumberMinMaxDigits(previousMatch.rating, 1)}
                             </div>
                             <ArrowRightIcon></ArrowRightIcon>
                             <div
-                                className={`w-10 rounded-sm text-center text-sm text-white ${beforeRating === afterRating ? 'bg-yellow-900/50' : beforeRating > afterRating ? 'bg-red-900/50' : 'bg-green-900/50'}`}
+                                className={`w-10 rounded-sm text-center text-sm text-white ${previousMatch.rating === match.rating ? 'bg-yellow-900/50' : previousMatch.rating > match.rating ? 'bg-red-900/50' : 'bg-green-900/50'}`}
                             >
-                                {formatNumberMinMaxDigits(afterRating, 1)}
+                                {formatNumberMinMaxDigits(match.rating, 1)}
                             </div>
                         </div>
                     </div>
@@ -138,7 +149,7 @@ export function PlayerChart({ development }: { development: PlayerDevelopmentDto
                 type: 'line',
                 smooth: true,
                 data: development.map((d) => ({
-                    value: [d.date, ordinal(d)],
+                    value: [d.date, d.rating],
                     itemStyle: {
                         color: getItemColor(d.result),
                         borderColor: getItemBorderColor(d.result),

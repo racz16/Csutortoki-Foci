@@ -315,7 +315,7 @@ export async function getPlayerDevelopment(playerId: number): Promise<PlayerDeve
 
     const oenDayInMs = 1000 * 60 * 60 * 24;
     return [
-        { mu: DEFAULT_MU, sigma: DEFAULT_SIGMA, date: new Date(results[0].date.getTime() - oenDayInMs) },
+        { rating: 0, date: new Date(results[0].date.getTime() - oenDayInMs) },
         ...results.map((x) => {
             const teamIndex = x.team[0].teamPlayer.length ? 0 : 1;
             const teamPlayer = x.team[teamIndex].teamPlayer[0];
@@ -324,8 +324,7 @@ export async function getPlayerDevelopment(playerId: number): Promise<PlayerDeve
                 score1: x.team[0].score,
                 score2: x.team[1].score,
                 result: Math.sign(x.team[teamIndex].score - x.team[1 - teamIndex].score),
-                mu: teamPlayer.afterMu,
-                sigma: teamPlayer.afterSigma,
+                rating: ordinal({ mu: teamPlayer.afterMu, sigma: teamPlayer.afterSigma }),
             };
         }),
     ];
