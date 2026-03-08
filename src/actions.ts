@@ -8,7 +8,7 @@ import { createMatch, deleteMatch, editMatch } from './logic/matches';
 import { createPlayer, deletePlayer, editPlayer } from './logic/players';
 import prismaClient, { TPrismaClient } from './logic/prisma';
 import { updateGlobalStatistics, updatePlayerStatistics } from './logic/statistics';
-import { DEFAULT_MU, DEFAULT_SIGMA } from './utility';
+import { DEFAULT_MU, DEFAULT_SIGMA, parseDateTimeLocalToUtc } from './utility';
 
 interface TeamRatingQueryResult {
     score: number;
@@ -99,7 +99,7 @@ function getBoolean(form: FormData, key: string): boolean {
 function getDate(form: FormData, key: string): Date | undefined {
     const rawValue = form.get(key);
     if (rawValue) {
-        const date = new Date(rawValue.toString());
+        const date = parseDateTimeLocalToUtc(rawValue.toString());
         date.setSeconds(0, 0);
         return date;
     } else {

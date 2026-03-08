@@ -50,6 +50,14 @@ export function formatDateTimeToDateTimeLocal(date: Date): string {
     return `${year}-${month}-${day}T${hour}:${minute}`;
 }
 
+export function parseDateTimeLocalToUtc(rawDate: string): Date {
+    const localDate = new Date(`${rawDate}:00Z`);
+    const timeZoneOffset = getTimeZoneOffset(localDate);
+    const sign = timeZoneOffset >= 0 ? '+' : '-';
+    const absOffset = Math.abs(timeZoneOffset).toString().padStart(2, '0');
+    return new Date(`${rawDate}:00${sign}${absOffset}:00`);
+}
+
 export function getTimeZoneOffset(date: Date): number {
     const dtf = new Intl.DateTimeFormat(LOCALE, {
         timeZoneName: 'shortOffset',
