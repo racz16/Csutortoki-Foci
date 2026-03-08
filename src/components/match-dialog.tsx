@@ -80,7 +80,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
         async function fetchPlayers() {
             const params = new URLSearchParams();
             if (match) {
-                params.append('date', match.date);
+                params.append('date', formatDateTimeToDateTimeLocal(new Date(match.date)));
             }
             const playersResponse = await fetch(`/api/players?${params}`);
             const playersJson: PlayerDto[] = await playersResponse.json();

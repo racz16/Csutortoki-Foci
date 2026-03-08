@@ -1,4 +1,5 @@
 import { getAllPlayers } from '@/logic/players';
+import { parseDateTimeLocalToUtc } from '@/utility';
 import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest): Promise<Response> {
@@ -13,5 +14,5 @@ export async function GET(req: NextRequest): Promise<Response> {
 
 function getDate(req: NextRequest): Date | undefined {
     const date = req.nextUrl.searchParams.get('date');
-    return date ? new Date(date) : undefined;
+    return date ? parseDateTimeLocalToUtc(date) : undefined;
 }
