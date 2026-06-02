@@ -313,7 +313,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
                                         setLocation(+e.target.value);
                                         setDirty('location');
                                     }}
-                                    className="input h-8.5"
+                                    className="input h-8.5 w-full"
                                     aria-labelledby="location-error"
                                 >
                                     {locations.map((l) => (
