@@ -42,7 +42,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
             : undefined,
     });
     const [dirtyFields, setDirtyFields] = useState<Set<MatchKey>>(new Set());
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState(true);
 
     const now = new Date();
     const nowWithoutSecondsAndMilliseconds = new Date(
