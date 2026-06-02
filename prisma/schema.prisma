@@ -60,24 +60,15 @@ model Location {
 }
 
 model GlobalStatistic {
-  id                  Int     @id @default(autoincrement())
-  index               Int     @db.SmallInt
-  name                String
-  value               String
-  details             String?
-  extraDetails        String?
-  extraDetailsTooltip String?
+  id        Int  @id @default(autoincrement())
+  index     Int  @db.SmallInt
+  statistic Json @default("{\"type\": \"simple\", \"name\": \"\", \"value\": \"\"}")
 }
 
 model PlayerStatistic {
-  id                  Int     @id @default(autoincrement())
-  index               Int     @db.SmallInt
-  playerId            Int
-  player              Player  @relation(fields: [playerId], references: [id])
-  name                String
-  value               String
-  valueAriaLabel      String?
-  details             String?
-  extraDetails        String?
-  extraDetailsTooltip String?
+  id        Int    @id @default(autoincrement())
+  index     Int    @db.SmallInt
+  playerId  Int
+  player    Player @relation(fields: [playerId], references: [id])
+  statistic Json   @default("{\"type\": \"simple\", \"name\": \"\", \"value\": \"\"}")
 }

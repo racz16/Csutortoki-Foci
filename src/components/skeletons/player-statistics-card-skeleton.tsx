@@ -16,6 +16,7 @@ export function PlayerStatisticsCardSkeleton(): JSX.Element {
                             <StatisticCardSkeleton
                                 size="small"
                                 className={i === statisticPlaceholders.length - 1 ? 'col-span-2' : ''}
+                                type={i === statisticPlaceholders.length - 1 ? 'match-form' : 'simple'}
                                 key={s}
                             />
                         ))}

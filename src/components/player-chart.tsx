@@ -1,6 +1,7 @@
 'use client';
 
 import { PlayerDevelopmentDto } from '@/dtos/player-development-dto';
+import { MatchResultType } from '@/json-types/match-result-type';
 import { chivoMonoFont, formatDateTime, formatNumberMaxDigits, formatNumberMinMaxDigits } from '@/utility';
 import { ArrowRightIcon } from '@phosphor-icons/react';
 import {
@@ -190,24 +191,24 @@ export function PlayerChart({ development }: { development: PlayerDevelopmentDto
     );
 }
 
-function getItemColor(result?: number): string {
+function getItemColor(result?: MatchResultType): string {
     if (result == null) {
         return '#005986';
-    } else if (result === 1) {
+    } else if (result === 'win') {
         return '#1a9c4e';
-    } else if (result === -1) {
+    } else if (result === 'loss') {
         return '#d63031';
     } else {
         return '#d4a017';
     }
 }
 
-function getItemBorderColor(result?: number): string {
+function getItemBorderColor(result?: MatchResultType): string {
     if (result == null) {
         return '#005986';
-    } else if (result === 1) {
+    } else if (result === 'win') {
         return '#0f6132';
-    } else if (result === -1) {
+    } else if (result === 'loss') {
         return '#8b0000';
     } else {
         return '#8a6200';

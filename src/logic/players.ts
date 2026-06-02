@@ -2,6 +2,7 @@ import { PlayerDevelopmentDto } from '@/dtos/player-development-dto';
 import { PlayerDto } from '@/dtos/player-dto';
 import { PlayerListDto } from '@/dtos/player-list-dto';
 import { PlayerStateDto } from '@/dtos/player-state-dto';
+import { MatchResultType } from '@/json-types/match-result-type';
 import { DEFAULT_MU, DEFAULT_SIGMA, preventPrerenderingInCiPipeline, sortPlayers, ValidationError } from '@/utility';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
@@ -390,9 +391,20 @@ export async function getPlayerDevelopment(playerId: number): Promise<PlayerDeve
                 date: x.date,
                 score1: x.team[0].score,
                 score2: x.team[1].score,
-                result: Math.sign(x.team[teamIndex].score - x.team[1 - teamIndex].score),
+                result: getMatchResultType(x.team[teamIndex].score, x.team[1 - teamIndex].score),
                 rating: ordinal({ mu: teamPlayer.afterMu, sigma: teamPlayer.afterSigma }),
             };
         }),
     ];
+}
+
+function getMatchResultType(score1: number, score2: number): MatchResultType {
+    const diff = score1 - score2;
+    if (diff > 0) {
+        return 'win';
+    } else if (diff < 0) {
+        return 'loss';
+    } else {
+        return 'draw';
+    }
 }
