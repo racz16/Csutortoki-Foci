@@ -87,6 +87,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
             const params = new URLSearchParams();
             if (match) {
                 params.append('date', formatDateTimeToDateTimeLocal(new Date(match.date)));
+                params.append('matchId', match.id.toString());
             }
             const playersResponse = await fetch(`/api/players?${params}`);
             const playersJson: PlayerDto[] = await playersResponse.json();
@@ -157,6 +158,9 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
     async function changeDate(e: React.FocusEvent<HTMLInputElement, Element>): Promise<void> {
         const params = new URLSearchParams();
         params.append('date', e.target.value);
+        if (match) {
+            params.append('matchId', match.id.toString());
+        }
         const playersResponse = await fetch(`/api/players?${params}`);
         const playersJson: PlayerDto[] = await playersResponse.json();
         setPlayers((x) => [...x.map((p) => playersJson.find((z) => z.id === p.id) ?? { ...p })]);

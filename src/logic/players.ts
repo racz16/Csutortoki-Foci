@@ -2,11 +2,12 @@ import { PlayerDevelopmentDto } from '@/dtos/player-development-dto';
 import { PlayerDto } from '@/dtos/player-dto';
 import { PlayerListDto } from '@/dtos/player-list-dto';
 import { PlayerStateDto } from '@/dtos/player-state-dto';
-import { DEFAULT_MU, DEFAULT_SIGMA, preventPrerenderingInCiPipeline, ValidationError } from '@/utility';
+import { DEFAULT_MU, DEFAULT_SIGMA, preventPrerenderingInCiPipeline, sortPlayers, ValidationError } from '@/utility';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { ordinal } from 'openskill';
+import { computeResults } from './matches';
 import prismaClient from './prisma';
 import { updateGlobalStatistics, updatePlayerStatistics } from './statistics';
 import { authOptions } from './users';
@@ -56,35 +57,101 @@ function mapPlayerToListDto(player: PlayerQueryResult, matchCount: number): Play
     };
 }
 
-export async function getAllPlayers(date?: Date): Promise<PlayerDto[]> {
+export async function getAllPlayers(date?: Date, matchId?: number): Promise<PlayerDto[]> {
     await preventPrerenderingInCiPipeline();
+
+    const originalDate = await getOriginalDate(matchId);
+    const lowerDate = date && originalDate ? (date < originalDate ? date : originalDate) : date || originalDate;
+    const playersMap = await getPlayersMap(lowerDate, matchId);
+    await updateTeamPlayers(playersMap, date, originalDate);
+
+    return Array.from(playersMap.values())
+        .map((player) => ({
+            id: player.id,
+            name: player.name,
+            rating: ordinal({ mu: player.mu, sigma: player.sigma }),
+            mu: player.mu,
+            sigma: player.sigma,
+            regular: player.regular,
+        }))
+        .sort(sortPlayers);
+}
+
+async function getOriginalDate(matchId?: number): Promise<Date | undefined> {
+    if (!matchId) {
+        return undefined;
+    }
+    const originalMatch = await prismaClient.match.findFirstOrThrow({ where: { id: matchId }, select: { date: true } });
+    return originalMatch?.date;
+}
+
+async function getPlayersMap(
+    date?: Date,
+    matchId?: number
+): Promise<Map<number, { id: number; name: string; regular: boolean; mu: number; sigma: number }>> {
     const players = await prismaClient.player.findMany({
         include: {
             teamPlayer: {
                 take: 1,
-                where: { team: { match: { date: { lt: date } } } },
+                where: { team: { match: { date: { lt: date }, NOT: { id: matchId } } } },
                 orderBy: { team: { match: { date: 'desc' } } },
                 omit: { beforeMu: true, beforeSigma: true, id: true, playerId: true, teamId: true, weight: true },
             },
         },
-        orderBy: [{ regular: 'desc' }, { name: 'asc' }],
+        omit: { mu: true, sigma: true },
     });
-    return players.map((p) => {
-        let mu = date ? DEFAULT_MU : p.mu;
-        let sigma = date ? DEFAULT_SIGMA : p.sigma;
-        if (date && p.teamPlayer.length) {
-            mu = p.teamPlayer[0].afterMu;
-            sigma = p.teamPlayer[0].afterSigma;
-        }
-        return {
-            id: p.id,
-            name: p.name,
-            rating: ordinal({ mu, sigma }),
-            mu,
-            sigma,
-            regular: p.regular,
+    const playersMap = new Map<number, { id: number; name: string; regular: boolean; mu: number; sigma: number }>();
+    for (const player of players) {
+        const values = {
+            id: player.id,
+            name: player.name,
+            regular: player.regular,
+            mu: DEFAULT_MU,
+            sigma: DEFAULT_SIGMA,
         };
+        if (player.teamPlayer.length > 0) {
+            values.mu = player.teamPlayer[0].afterMu;
+            values.sigma = player.teamPlayer[0].afterSigma;
+        }
+        playersMap.set(player.id, values);
+    }
+    return playersMap;
+}
+
+async function updateTeamPlayers(
+    playersMap: Map<number, { mu: number; sigma: number }>,
+    date?: Date,
+    originalDate?: Date
+): Promise<void> {
+    if (!date || !originalDate || date <= originalDate) {
+        return;
+    }
+
+    const matches = await prismaClient.match.findMany({
+        where: { date: { lte: date, gt: originalDate } },
+        orderBy: { date: 'asc' },
+        include: {
+            team: {
+                include: { teamPlayer: { select: { id: true, playerId: true } } },
+                omit: { id: true, matchId: true },
+            },
+        },
+        omit: { id: true, date: true, locationId: true },
     });
+    for (const match of matches) {
+        const osResults = computeResults(match.team, playersMap);
+        for (let teamIndex = 0; teamIndex < match.team.length; teamIndex++) {
+            const team = match.team[teamIndex];
+            const osTeam = osResults[teamIndex];
+            for (let playerIndex = 0; playerIndex < team.teamPlayer.length; playerIndex++) {
+                const teamPlayer = team.teamPlayer[playerIndex];
+                const osRating = osTeam[playerIndex];
+                const player = playersMap.get(teamPlayer.playerId)!;
+                player.mu = osRating.mu;
+                player.sigma = osRating.sigma;
+            }
+        }
+    }
 }
 
 interface CreatePlayerDto {
