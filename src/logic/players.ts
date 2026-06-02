@@ -380,9 +380,9 @@ export async function getPlayerDevelopment(playerId: number): Promise<PlayerDeve
         return [];
     }
 
-    const oenDayInMs = 1000 * 60 * 60 * 24;
+    const oneDayInMs = 1000 * 60 * 60 * 24;
     return [
-        { rating: 0, date: new Date(results[0].date.getTime() - oenDayInMs) },
+        { rating: 0, date: new Date(results[0].date.getTime() - oneDayInMs) },
         ...results.map((x) => {
             const teamIndex = x.team[0].teamPlayer.length ? 0 : 1;
             const teamPlayer = x.team[teamIndex].teamPlayer[0];
