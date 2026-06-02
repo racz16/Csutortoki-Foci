@@ -382,6 +382,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
                     {teams[0].map((p) => (
                         <input type="hidden" name="team1" value={p.id} key={p.id} />
                     ))}
+                    <h3 className="text-center text-xl sm:hidden">{(predictions[0] * 100).toFixed()}%</h3>
                 </div>
 
                 <div className="hidden grid-rows-[auto_1fr] gap-2 sm:grid">
@@ -472,6 +473,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
                     {teams[1].map((p) => (
                         <input type="hidden" name="team2" value={p.id} key={p.id} />
                     ))}
+                    <h3 className="text-center text-xl sm:hidden">{(predictions[1] * 100).toFixed()}%</h3>
                 </div>
 
                 <h3 className="hidden text-center text-xl sm:block">{(predictions[0] * 100).toFixed()}%</h3>
