@@ -4,7 +4,13 @@ import { createMatchEndpoint, editMatchEndpoint } from '@/actions';
 import { LocationDto } from '@/dtos/location-dto';
 import { MatchDto } from '@/dtos/match-dto';
 import { PlayerDto } from '@/dtos/player-dto';
-import { formatDateTimeToDateTimeLocal, formatNumberMinMaxDigits, getTimeZoneOffset, isAdmin } from '@/utility';
+import {
+    formatDateTimeToDateTimeLocal,
+    formatNumberMinMaxDigits,
+    getTimeZoneOffset,
+    isAdmin,
+    sortPlayers,
+} from '@/utility';
 import { CaretLeftIcon, CaretRightIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -110,20 +116,6 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
         setDirtyFields((prev) => new Set(prev).add(key));
     }
 
-    function sort(a: PlayerDto, b: PlayerDto): number {
-        if (!a.regular && b.regular) {
-            return 1;
-        } else if (a.regular && !b.regular) {
-            return -1;
-        }
-        if (a.name > b.name) {
-            return 1;
-        } else if (a.name < b.name) {
-            return -1;
-        }
-        return a.id - b.id;
-    }
-
     function move(from: PlayerGroup, to: PlayerGroup, id: number): void {
         if (from === to) {
             return;
@@ -156,7 +148,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
         if (from === name) {
             return team.filter((p) => p.id !== player.id);
         } else if (to === name) {
-            return [...team, { ...player }].sort(sort);
+            return [...team, { ...player }].sort(sortPlayers);
         } else {
             return team;
         }

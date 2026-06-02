@@ -1,6 +1,7 @@
 import { SessionContextValue } from 'next-auth/react';
 import { Chivo_Mono } from 'next/font/google';
 import { connection } from 'next/server';
+import { PlayerDto } from './dtos/player-dto';
 
 export async function Wait(timeout = 1000): Promise<void> {
     return new Promise<void>((resolve) => {
@@ -89,6 +90,20 @@ export async function preventPrerenderingInCiPipeline(): Promise<void> {
 
 export function isAdmin(session: SessionContextValue): boolean {
     return session.status === 'authenticated' && session.data.admin;
+}
+
+export function sortPlayers(a: PlayerDto, b: PlayerDto): number {
+    if (!a.regular && b.regular) {
+        return 1;
+    } else if (a.regular && !b.regular) {
+        return -1;
+    }
+    if (a.name > b.name) {
+        return 1;
+    } else if (a.name < b.name) {
+        return -1;
+    }
+    return a.id - b.id;
 }
 
 export class ValidationError extends Error {}
