@@ -1,7 +1,7 @@
 'use client';
 
 import { isAdmin } from '@/utility';
-import { PlusIcon, StrategyIcon } from '@phosphor-icons/react';
+import { PlusIcon, UserListIcon } from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
 import { JSX } from 'react';
 import { useDialog } from '../dialog-provider';
@@ -19,7 +19,7 @@ export function NewMatchButton({ playerCount }: { playerCount: number }): JSX.El
             title={playerCount < 2 ? 'Egy meccshez kell legalább 2 játékos' : undefined}
             aria-label={admin ? 'Meccs létrehozása' : 'Meccs tervezése'}
         >
-            {admin ? <PlusIcon weight="bold" /> : <StrategyIcon weight="bold" />}
+            {admin ? <PlusIcon weight="bold" /> : <UserListIcon weight="regular" />}
         </button>
     );
 }
