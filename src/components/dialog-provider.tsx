@@ -1,5 +1,6 @@
 'use client';
 
+import { Size } from '@/dtos/types';
 import { usePathname } from 'next/navigation';
 import {
     ComponentType,
@@ -16,12 +17,12 @@ import {
 interface DialogState {
     Component: ComponentType<any>;
     props: any;
-    size: 'small' | 'large';
+    size: Size;
     pathname: string;
 }
 
 interface DialogContextType {
-    open: <T>(Component: ComponentType<T>, props: T, size: 'small' | 'large') => void;
+    open: <T>(Component: ComponentType<T>, props: T, size: Size) => void;
     close: () => void;
 }
 
@@ -55,7 +56,7 @@ export default function DialogProvider({ children }: { children: ReactNode }) {
         setState(null);
     }, []);
 
-    const open = useCallback(<T,>(Component: ComponentType<T>, props: T, size: 'small' | 'large') => {
+    const open = useCallback(<T,>(Component: ComponentType<T>, props: T, size: Size) => {
         setState({ Component, props, size, pathname: window.location.pathname });
     }, []);
 

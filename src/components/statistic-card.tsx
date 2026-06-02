@@ -1,4 +1,5 @@
 import { StatisticDto } from '@/dtos/statistic-dto';
+import { Size } from '@/dtos/types';
 import { JSX } from 'react';
 import { Card } from './card';
 
@@ -9,7 +10,7 @@ export function StatisticCard({
 }: {
     statistic: StatisticDto;
     className?: string;
-    size?: 'small' | 'large';
+    size?: Size;
 }): JSX.Element {
     return (
         <Card size={size} className={className}>

@@ -1,13 +1,8 @@
+import { Size } from '@/dtos/types';
 import { JSX } from 'react';
 import { Card } from '../card';
 
-export function StatisticCardSkeleton({
-    className,
-    size = 'large',
-}: {
-    className?: string;
-    size?: 'small' | 'large';
-}): JSX.Element {
+export function StatisticCardSkeleton({ className, size = 'large' }: { className?: string; size?: Size }): JSX.Element {
     return (
         <Card size={size} className={`row-span-3 grid grid-rows-subgrid gap-1 sm:gap-2 ${className}`}>
             <div className="flex h-6 items-center">

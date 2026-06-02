@@ -1,4 +1,5 @@
 import { PlayerListDto } from '@/dtos/player-list-dto';
+import { OrderByDirection } from '@/dtos/types';
 import { SortAscendingIcon, SortDescendingIcon } from '@phosphor-icons/react';
 import { JSX } from 'react';
 
@@ -8,7 +9,7 @@ export function PlayersTableSortIcon({
     name,
 }: {
     orderBy: keyof PlayerListDto;
-    orderByDirection: 'asc' | 'desc';
+    orderByDirection: OrderByDirection;
     name: keyof PlayerListDto;
 }): JSX.Element {
     return (

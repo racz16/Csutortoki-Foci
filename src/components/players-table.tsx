@@ -1,6 +1,7 @@
 'use client';
 
 import { PlayerListDto } from '@/dtos/player-list-dto';
+import { OrderByDirection } from '@/dtos/types';
 import { formatNumberMinMaxDigits, isAdmin } from '@/utility';
 import { CaretLeftIcon, CaretLineLeftIcon, CaretLineRightIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
@@ -14,7 +15,7 @@ import { PlayersTableSkeleton } from './skeletons/players-table-skeleton';
 
 export function PlayersTable({ players }: { players: PlayerListDto[] }): JSX.Element {
     const [orderBy, setOrderBy] = useState<keyof PlayerListDto>('name');
-    const [orderByDirection, setOrderByDirection] = useState<'asc' | 'desc'>('asc');
+    const [orderByDirection, setOrderByDirection] = useState<OrderByDirection>('asc');
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState<number | null>(null);
     const [hideNonRegulars, setHideNonRegulars] = useState<boolean | null>(null);
