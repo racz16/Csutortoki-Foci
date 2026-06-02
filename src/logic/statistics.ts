@@ -125,7 +125,10 @@ export async function getPlayerStatistics(playerId: number): Promise<PlayerStati
         redirect('/not-found');
     }
     const playerStatistics = await prismaClient.playerStatistic.findMany({
-        where: { playerId },
+        where: {
+            playerId,
+            index: { notIn: [PLAYER_STATISTIC_FORM_INDEX] },
+        },
         orderBy: { index: 'asc' },
         omit: { playerId: true, index: true },
     });

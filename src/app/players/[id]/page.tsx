@@ -72,16 +72,11 @@ async function PlayerStatisticsLazy({ playerId }: { playerId: number }): Promise
             </div>
             {playerStatistics.regular &&
                 (playerStatistics.statistics.length ? (
-                    <div className="grid grid-cols-2 grid-rows-21 gap-2 sm:grid-cols-4 sm:grid-rows-9 sm:gap-4">
-                        <Card className="col-span-2 row-span-6 flex items-end justify-center sm:col-span-1 lg:row-span-9">
-                            <div className="flex aspect-9/16 w-50 items-center justify-center">
-                                <UserCircleIcon size={64} weight="thin" alt="" />
-                            </div>
-                        </Card>
+                    <div className="grid grid-cols-2 grid-rows-12 gap-2 sm:grid-cols-4 sm:grid-rows-6 sm:gap-4">
                         {playerStatistics.statistics.map((s, i) => (
                             <StatisticCard
                                 statistic={s}
-                                className={`row-span-3 grid grid-rows-subgrid gap-1 sm:gap-2 ${i === playerStatistics.statistics.length - 1 ? 'col-span-2 lg:col-span-1' : ''}`}
+                                className="row-span-3 grid grid-rows-subgrid gap-1 sm:gap-2"
                                 key={s.id}
                             />
                         ))}
