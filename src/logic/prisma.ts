@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from '@/generated/prisma';
 import { DefaultArgs } from '@/generated/prisma/runtime/library';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 export type TPrismaClient = Omit<
     PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
@@ -12,11 +13,15 @@ declare global {
 
 let prismaClient: PrismaClient;
 
+const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+});
+
 if (process.env.NODE_ENV === 'production') {
-    prismaClient = new PrismaClient();
+    prismaClient = new PrismaClient({ adapter });
 } else {
     if (!global.prismaClient) {
-        global.prismaClient = new PrismaClient();
+        global.prismaClient = new PrismaClient({ adapter });
     }
     prismaClient = global.prismaClient;
 }

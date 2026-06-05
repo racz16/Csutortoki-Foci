@@ -12,6 +12,7 @@ export function Matches({ initialMatches, playerId }: { initialMatches: MatchesD
     const infiniteScrollTarget = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMatches(initialMatches);
     }, [initialMatches]);
 
