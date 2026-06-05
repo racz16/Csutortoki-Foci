@@ -21,10 +21,8 @@
         "eslint": "eslint",
         "prettier-lint": "prettier --check .",
         "prettier-format": "prettier --write .",
-        "prisma-dev": "prisma dev",
         "prisma-generate": "prisma generate",
         "prisma-migrate": "prisma migrate dev",
-        "prisma-studio": "prisma studio",
         "prisma-format-lint": "prisma format --check",
         "prisma-format": "prisma format",
         "prepare": "husky install"
