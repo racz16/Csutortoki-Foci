@@ -395,7 +395,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
                         {players.map((p) => (
                             <div className={`glass-nested flex items-center justify-between rounded-md p-1`} key={p.id}>
                                 <div className="order-2 flex flex-col items-center">
-                                    <Link href={`/players/${p.id}`} className="link">
+                                    <Link href={`/players/${p.id}`} className="link text-center">
                                         {p.name}
                                     </Link>
                                     <div className="flex gap-1">
