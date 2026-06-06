@@ -2,7 +2,7 @@ import { LocationDto } from '@/dtos/location-dto';
 import { MatchDto } from '@/dtos/match-dto';
 import { MatchStateDto } from '@/dtos/match-state-dto';
 import { MatchesDto } from '@/dtos/matches-dto';
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@/generated/prisma/client';
 import { DEFAULT_MU, DEFAULT_SIGMA, preventPrerenderingInCiPipeline, ValidationError } from '@/utility';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';

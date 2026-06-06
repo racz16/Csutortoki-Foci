@@ -1,6 +1,6 @@
 import { PlayerStatisticsDto } from '@/dtos/player-statistics-dto';
 import { StatisticDto } from '@/dtos/statistic-dto';
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@/generated/prisma/client';
 import { MatchResult } from '@/json-types/match-result';
 import { Statistic } from '@/json-types/statistic';
 import {
