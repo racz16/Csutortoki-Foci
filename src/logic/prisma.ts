@@ -1,11 +1,8 @@
-import { Prisma, PrismaClient } from '@/generated/prisma';
-import { DefaultArgs } from '@/generated/prisma/runtime/library';
+import { PrismaClient } from '@/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import * as runtime from '@prisma/client/runtime/client';
 
-export type TPrismaClient = Omit<
-    PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-    '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'
->;
+export type TPrismaClient = Omit<PrismaClient, runtime.ITXClientDenyList>;
 
 declare global {
     var prismaClient: PrismaClient;
