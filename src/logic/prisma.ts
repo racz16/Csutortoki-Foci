@@ -13,15 +13,19 @@ declare global {
 
 let prismaClient: PrismaClient;
 
-const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL,
-});
-
 if (process.env.NODE_ENV === 'production') {
-    prismaClient = new PrismaClient({ adapter });
+    prismaClient = new PrismaClient({
+        adapter: new PrismaPg({
+            connectionString: process.env.DATABASE_URL,
+        }),
+    });
 } else {
     if (!global.prismaClient) {
-        global.prismaClient = new PrismaClient({ adapter });
+        global.prismaClient = new PrismaClient({
+            adapter: new PrismaPg({
+                connectionString: process.env.DATABASE_URL,
+            }),
+        });
     }
     prismaClient = global.prismaClient;
 }

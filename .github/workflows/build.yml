@@ -2,6 +2,7 @@ name: Build
 on: [push, pull_request]
 env:
     PREVENT_PRERENDERING: 1
+    DATABASE_URL: postgresql://user:password@localhost:5432/dummy
 jobs:
     build:
         runs-on: ubuntu-latest
