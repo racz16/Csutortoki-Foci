@@ -155,7 +155,7 @@ export async function updateGlobalStatistics(pc: TPrismaClient): Promise<void> {
     }
     const players = await pc.player.findMany({
         omit: { id: true, regular: true },
-        where: { regular: true, teamPlayer: { some: {} } },
+        where: { teamPlayer: { some: {} } },
         include: { _count: { select: { teamPlayer: {} } } },
     });
     if (!players.length) {
