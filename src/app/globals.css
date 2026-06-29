@@ -106,3 +106,11 @@ input[type='number'] {
 body:has(dialog[open]) {
     overflow: hidden;
 }
+
+[data-ctrl='true']:hover .normal-icon {
+    display: none;
+}
+
+[data-ctrl='true']:hover .ctrl-icon {
+    display: block;
+}

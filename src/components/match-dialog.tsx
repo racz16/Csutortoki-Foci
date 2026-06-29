@@ -11,7 +11,14 @@ import {
     isAdmin,
     sortPlayers,
 } from '@/utility';
-import { CaretLeftIcon, CaretRightIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
+import {
+    CaretLeftIcon,
+    CaretLineLeftIcon,
+    CaretLineRightIcon,
+    CaretRightIcon,
+    TrashIcon,
+    XIcon,
+} from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Team, predictDraw, predictWin, rating } from 'openskill';
@@ -43,6 +50,7 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
     });
     const [dirtyFields, setDirtyFields] = useState<Set<MatchKey>>(new Set());
     const [loading, setLoading] = useState(true);
+    const [ctrlPressed, setCtrlPressed] = useState(false);
 
     const now = new Date();
     const nowWithoutSecondsAndMilliseconds = new Date(
@@ -112,6 +120,22 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
         }
         fetchPlayers();
     }, [match]);
+
+    useEffect(() => {
+        const onKeyDown = (e: KeyboardEvent) => setCtrlPressed(e.ctrlKey);
+        const onKeyUp = (e: KeyboardEvent) => setCtrlPressed(e.ctrlKey);
+        const onBlur = () => setCtrlPressed(false);
+
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keyup', onKeyUp);
+        window.addEventListener('blur', onBlur);
+
+        return () => {
+            window.removeEventListener('keydown', onKeyDown);
+            window.removeEventListener('keyup', onKeyUp);
+            window.removeEventListener('blur', onBlur);
+        };
+    }, []);
 
     function setDirty(key: MatchKey): void {
         setDirtyFields((prev) => new Set(prev).add(key));
@@ -350,11 +374,22 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
                                     <button
                                         type="button"
                                         disabled={isPending || loading}
-                                        onClick={() => move(0, 'player', p.id)}
-                                        className="interactivity interactivity-danger"
+                                        onClick={(e) => move(0, 'player', p.id)}
+                                        className="interactivity interactivity-danger sm:hidden"
                                         aria-label="Eltávolítás a csapatból"
                                     >
-                                        <TrashIcon />
+                                        <TrashIcon className="sm:hidden" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={isPending || loading}
+                                        onClick={(e) => move(0, e.ctrlKey ? 1 : 'player', p.id)}
+                                        className="interactivity interactivity-normal hidden sm:block"
+                                        data-ctrl={ctrlPressed}
+                                        aria-label="Eltávolítás a csapatból"
+                                    >
+                                        <CaretRightIcon className="normal-icon hidden sm:block" />
+                                        <CaretLineRightIcon className="ctrl-icon hidden" />
                                     </button>
                                 </div>
                             </div>
@@ -442,11 +477,22 @@ export function MatchDialog({ match }: { match?: MatchDto }) {
                                     <button
                                         type="button"
                                         disabled={isPending || loading}
-                                        onClick={() => move(1, 'player', p.id)}
-                                        className="interactivity interactivity-danger"
+                                        onClick={(e) => move(1, 'player', p.id)}
+                                        className="interactivity interactivity-danger sm:hidden"
                                         aria-label="Eltávolítás a csapatból"
                                     >
-                                        <TrashIcon />
+                                        <TrashIcon className="sm:hidden" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={isPending || loading}
+                                        onClick={(e) => move(1, e.ctrlKey ? 0 : 'player', p.id)}
+                                        className="interactivity interactivity-normal hidden sm:block"
+                                        data-ctrl={ctrlPressed}
+                                        aria-label="Eltávolítás a csapatból"
+                                    >
+                                        <CaretLeftIcon className="normal-icon hidden sm:block" />
+                                        <CaretLineLeftIcon className="ctrl-icon hidden" />
                                     </button>
                                 </div>
                             </div>
